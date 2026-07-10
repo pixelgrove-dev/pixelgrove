@@ -1,0 +1,17 @@
+# VS Code
+.vscode/
+
+# Logs
+logs/
+
+# Databases
+*.db
+
+# PHP Info
+phpinfo.php
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
