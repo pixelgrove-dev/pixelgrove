@@ -41,5 +41,30 @@ const triviaTopics = [
         "False. Herons fly with their necks folded into an S-shape.",
         "A rookery is a large nesting colony where many herons build their nests together.",
     ] 
+  },
+  {
+    id: "",
+    title: "",
+    topic: "",
+    category: "",
+    date: "",
+    image: "",
+    youtube: "",
+    information: [
+        "---",
+        "",
+        "---",
+        "",
+        "---",
+        "",
+        "---",
+        "",
+    ],
+    questions: [
+        ""
+    ],
+    answers: [
+        "",
+    ] 
   }
 ];

@@ -672,3 +672,36 @@ li {
     }
 
 }
+
+.preview-card hr {
+    margin: 28px 0;
+    border: 0;
+    border-top: 1px solid #dfe8dc;
+}
+
+.preview-card ol {
+    padding-left: 24px;
+}
+
+.preview-card li {
+    margin-bottom: 14px;
+}
+
+.preview-answer-heading {
+    margin-top: 32px;
+}
+
+.preview-difficulty {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 3px 9px;
+
+    background: #eef3ed;
+    color: #4f7f58;
+
+    border-radius: 999px;
+
+    font-size: 0.75rem;
+    font-weight: bold;
+    vertical-align: middle;
+}
