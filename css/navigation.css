@@ -1,0 +1,83 @@
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(6, 16, 11, 0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+}
+
+.nav-container {
+    width: min(1100px, 90%);
+    margin: 0 auto;
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--accent);
+    font-family: "Manrope", sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.logo-seed {
+    color: var(--accent);
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover .logo-seed {
+    transform: scale(1.4);
+}
+
+nav a {
+    display: inline-block;
+    position: relative;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-left: 24px;
+    padding-bottom: 6px;
+    font-weight: 700;
+}
+
+nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width 0.25s ease;
+}
+
+nav a.active {
+    color: var(--accent);
+}
+
+nav a.active::after,
+nav a:hover::after {
+    width: 100%;
+}
+
+nav a:hover {
+    color: var(--accent-soft);
+}
+
+@media (max-width: 700px) {
+    .nav-container {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    nav a {
+        margin: 0 8px;
+    }
+}

@@ -1,0 +1,63 @@
+.hero {
+    position: relative;
+    overflow: hidden;
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+    background:
+        radial-gradient(circle at 15% 20%, rgba(143, 214, 148, 0.22), transparent 28%),
+        radial-gradient(circle at 85% 70%, rgba(200, 250, 204, 0.1), transparent 30%),
+        linear-gradient(135deg, var(--bg-main), var(--bg-dark));
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    width: min(1100px, 90%);
+    margin: 0 auto;
+    padding: 90px 0;
+}
+
+.hero-badge {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    color: var(--accent-soft);
+    background: rgba(143, 214, 148, 0.1);
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.hero h2 {
+    max-width: 850px;
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: -2px;
+    margin-bottom: 28px;
+}
+
+.hero p {
+    max-width: 650px;
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    margin-bottom: 34px;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.forest-glow {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(143, 214, 148, 0.22), transparent 18%),
+        radial-gradient(circle at 75% 65%, rgba(200, 250, 204, 0.12), transparent 20%),
+        radial-gradient(circle at 50% 100%, rgba(143, 214, 148, 0.1), transparent 28%);
+    animation: grove-breathe 8s ease-in-out infinite alternate;
+    z-index: 1;
+}

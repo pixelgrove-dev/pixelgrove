@@ -1,0 +1,39 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background: var(--bg-main);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+h1,
+h2,
+h3 {
+    font-family: "Manrope", sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+h1,
+h2,
+h3,
+p {
+    max-width: 100%;
+}
+
+footer {
+    text-align: center;
+    padding: 28px;
+    background: var(--bg-dark);
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+}

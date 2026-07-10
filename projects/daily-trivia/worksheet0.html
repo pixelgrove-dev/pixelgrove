@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Daily Grove Trivia</title>
+
+  <link rel="stylesheet" href="css/daily-trivia.css" />  
+</head>
+<body>
+  <div class="app-shell">
+  <div class="workspace">
+    <header class="app-header no-print">
+      <div>
+        <p class="app-label">Resident Activity Tool</p>
+        <h1>Grove Activity Studio</h1>
+      </div>
+
+      <button id="print-worksheet" class="print-button">Print Worksheet</button>
+    </header>
+
+    <section class="topic-selector no-print">
+      <label for="topic-select">Choose Topic:</label>
+      <select id="topic-select"></select>
+      <button id="load-topic">Load Topic</button>
+    </section>
+
+    <section class="topic-library no-print">
+
+      <div class="library-header">
+        <h2>Topic Library</h2>
+        <p>Select a topic to load it into the worksheet.</p>
+      </div>
+
+      <div id="topic-library" class="library-grid"></div>
+
+    </section>
+
+  </div>
+    
+  <main class="worksheet">
+    
+    <header class="worksheet-header">
+      <p class="label">Trivia Worksheet</p>
+      <h1 id="topic-title"></h1>
+      <p class="date">
+          Date: <span id="topic-date"></span>
+      </p>
+    </header>
+
+    <section class="info-box">
+      <h2>Read-Aloud Information</h2>
+      
+      <div id="information"></div>
+
+    </section>
+
+    <section class="media-box">
+
+      <h2>Picture or Video</h2>
+      <div id="media-content" class="media-content"></div>
+    
+    </section>
+
+    <section class="questions">
+      <h2>Comprehension Questions</h2>
+
+      <ol id="question-list"></ol>
+    </section>
+
+    <section class="answer-key">
+      <h2>Answer Key</h2>
+
+      <ol id="answer-list"></ol>
+    </section>
+  </main>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</div>
+</body>
+</html>

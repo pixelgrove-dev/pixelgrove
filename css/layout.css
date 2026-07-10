@@ -1,0 +1,49 @@
+.container {
+    width: min(1100px, 90%);
+    margin: 0 auto;
+}
+
+.section {
+    padding: 80px 0;
+}
+
+.section > .container,
+#projects.section {
+    width: min(1100px, 90%);
+    margin: 0 auto;
+}
+
+.section h2 {
+    font-size: 2.4rem;
+    margin-bottom: 16px;
+}
+
+.section-intro {
+    color: var(--text-muted);
+    margin-bottom: 32px;
+}
+
+.dark {
+    background: var(--bg-dark);
+}
+
+.dark p,
+.section p {
+    max-width: 750px;
+    color: var(--text-muted);
+}
+
+.project-grid,
+.growth-grid {
+    display: grid;
+    gap: 28px;
+}
+
+.project-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.growth-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    margin-top: 40px;
+}

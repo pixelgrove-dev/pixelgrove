@@ -1,0 +1,20 @@
+.page-hero {
+    padding: 110px 0 70px;
+    background:
+        radial-gradient(circle at 20% 20%, rgba(143, 214, 148, 0.18), transparent 28%),
+        linear-gradient(135deg, var(--bg-main), var(--bg-dark));
+}
+
+.page-hero h2 {
+    max-width: 800px;
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    line-height: 1;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+}
+
+.page-hero p {
+    max-width: 650px;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
