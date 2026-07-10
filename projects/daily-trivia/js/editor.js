@@ -327,15 +327,12 @@ function saveTopic() {
         return;
     }
 
-    const savedTopics =
-        JSON.parse(localStorage.getItem("groveTopics")) || [];
+    const savedTopics = getTopics();
 
-    savedTopics.push(topic);
+    savedTopics.push(topic)
 
-    localStorage.setItem(
-        "groveTopics",
-        JSON.stringify(savedTopics)
-    );
+    savedTopics(savedTopics);
+    
 
     saveMessage.textContent = `"${topic.title}" was saved successfully.`;
     saveMessage.className = "save-message success";

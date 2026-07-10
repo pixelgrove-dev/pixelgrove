@@ -1,8 +1,7 @@
 const topicGrid =
     document.getElementById("topic-grid");
 
-const topics =
-    JSON.parse(localStorage.getItem("groveTopics")) || [];
+const topics = getTopics();
 
 renderTopics();
 
