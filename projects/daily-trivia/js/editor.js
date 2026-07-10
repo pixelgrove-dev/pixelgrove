@@ -5,6 +5,10 @@
 const topicTitleInput = document.getElementById("topic-title-input");
 const categorySelect = document.getElementById("category");
 
+const imageUrlInput = document.getElementById("image-url");
+const youtubeUrlInput = document.getElementById("youtube-url");
+const previewMedia = document.getElementById("preview-media");
+
 const previewTitle = document.getElementById("preview-title");
 const previewCategory = document.getElementById("preview-category");
 
@@ -129,6 +133,33 @@ function renumberQuestions() {
 
 }
 
+function getYouTubeEmbedUrl(url) {
+    if (!url) {
+        return "";
+    }
+
+    try {
+        const parsedUrl = new URL(url);
+
+        if (parsedUrl.hostname.includes("youtu.be")) {
+            const videoId = parsedUrl.pathname.slice(1);
+            return `https://www.youtube.com/embed/${videoId}`;
+        }
+
+        if (parsedUrl.hostname.includes("youtube.com")) {
+            const videoId = parsedUrl.searchParams.get("v");
+
+            if (videoId) {
+                return `https://www.youtube.com/embed/${videoId}`;
+            }
+        }
+    } catch (error) {
+        return "";
+    }
+
+    return "";
+}
+
 function updatePreview() {
 
     previewTitle.textContent =
@@ -187,6 +218,37 @@ function updatePreview() {
         });
 
     });
+        previewMedia.innerHTML = "";
+        const imageUrl = imageUrlInput.value.trim();
+        const youtubeUrl = youtubeUrlInput.value.trim();
+    
+        if (imageUrl !== "") {
+            const image = document.createElement("img");
+
+            image.src = imageUrl;
+            image.alt = topicTitleInput.value || "Trivia topic image";
+            image.className = "preview-image";
+
+            image.addEventListener("error", () => {
+            image.remove();
+        });
+
+        previewMedia.appendChild(image);
+    }
+    
+    const youtubeEmbedUrl = getYouTubeEmbedUrl(youtubeUrl);
+    
+    if (youtubeEmbedUrl !== "") {
+        const videoFrame = document.createElement("iframe");
+
+        videoFrame.src = youtubeEmbedUrl;
+        videoFrame.title = "Related trivia video";
+        videoFrame.className = "preview-video";
+        videoFrame.loading = "lazy";
+        videoFrame.allowFullscreen = true;
+
+        previewMedia.appendChild(videoFrame);
+    }
 }
 
 /*==================================================
@@ -222,3 +284,6 @@ addQuestionButton.addEventListener("click", () => {
 
     updatePreview();
 });
+
+imageUrlInput.addEventListener("input", updatePreview);
+youtubeUrlInput.addEventListener("input", updatePreview);
