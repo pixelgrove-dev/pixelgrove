@@ -40,6 +40,38 @@ body {
   overflow-x: hidden;
 }
 
+.home-link {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 10;
+
+  padding: 15px 24px;
+  border: none;
+  border-radius: 999px;
+
+  background: var(--periwinkle-dark);
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  text-decoration: none;
+
+  box-shadow: 0 12px 28px rgba(98, 107, 176, 0.3);
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.home-link:hover {
+  background: #505994;
+  transform: translateY(-3px);
+}
+
+.home-link:focus-visible {
+  outline: 3px solid rgba(98, 107, 176, 0.35);
+  outline-offset: 3px;
+}
+
 .birthday-card {
   position: relative;
   z-index: 2;
