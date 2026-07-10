@@ -766,3 +766,65 @@ li {
 .save-message.error {
     color: #b33939;
 }
+
+/*==================================================
+    TOPIC LIBRARY
+==================================================*/
+
+.library-page{
+
+    width:min(1200px,90%);
+
+    margin:50px auto;
+
+}
+
+#topic-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fill,minmax(320px,1fr));
+
+    gap:25px;
+
+    margin-top:35px;
+
+}
+
+.topic-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    border:1px solid #dfe8dc;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.08);
+
+    transition:.25s;
+
+}
+
+.topic-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.topic-card h2{
+
+    margin-bottom:20px;
+
+    color:#315c3b;
+
+}
+
+.topic-card p{
+
+    margin-bottom:10px;
+
+}
