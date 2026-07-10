@@ -2,6 +2,10 @@
     ELEMENT REFERENCES
 ==================================================*/
 
+const difficultySelect = document.getElementById("difficulty");
+const saveTopicButton = document.getElementById("save-topic");
+const saveMessage = document.getElementById("save-message");
+
 const topicTitleInput = document.getElementById("topic-title-input");
 const categorySelect = document.getElementById("category");
 
@@ -251,9 +255,95 @@ function updatePreview() {
     }
 }
 
+function collectTopicData() {
+    const paragraphs = Array.from(
+        document.querySelectorAll(".reading-paragraph")
+    )
+        .map(textarea => textarea.value.trim())
+        .filter(paragraph => paragraph !== "");
+
+    const questions = Array.from(
+        document.querySelectorAll(".question-card")
+    )
+        .map(card => {
+            const question = card
+                .querySelector(".question-input")
+                .value
+                .trim();
+
+            const answer = card
+                .querySelector(".answer-input")
+                .value
+                .trim();
+
+            const difficulty = card
+                .querySelector(".question-difficulty")
+                .value;
+
+            return {
+                question,
+                answer,
+                difficulty
+            };
+        })
+        .filter(item => item.question !== "");
+
+    return {
+        id: crypto.randomUUID(),
+        title: topicTitleInput.value.trim(),
+        category: categorySelect.value,
+        difficulty: difficultySelect.value,
+        image: imageUrlInput.value.trim(),
+        youtube: youtubeUrlInput.value.trim(),
+        information: paragraphs,
+        questions,
+        createdAt: new Date().toISOString()
+    };
+}
+
+function validateTopic(topic) {
+    if (!topic.title) {
+        return "Please enter a topic title.";
+    }
+
+    if (topic.information.length === 0) {
+        return "Please add at least one reading paragraph.";
+    }
+
+    if (topic.questions.length === 0) {
+        return "Please add at least one question.";
+    }
+
+    return "";
+}
+
+function saveTopic() {
+    const topic = collectTopicData();
+    const validationMessage = validateTopic(topic);
+
+    if (validationMessage) {
+        saveMessage.textContent = validationMessage;
+        saveMessage.className = "save-message error";
+        return;
+    }
+
+    const savedTopics =
+        JSON.parse(localStorage.getItem("groveTopics")) || [];
+
+    savedTopics.push(topic);
+
+    localStorage.setItem(
+        "groveTopics",
+        JSON.stringify(savedTopics)
+    );
+
+    saveMessage.textContent = `"${topic.title}" was saved successfully.`;
+    saveMessage.className = "save-message success";
+}
 /*==================================================
     EVENTS
 ==================================================*/
+saveTopicButton.addEventListener("click", saveTopic);
 
 addParagraphButton.addEventListener("click", () => {
 

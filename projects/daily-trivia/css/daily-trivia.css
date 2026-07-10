@@ -730,3 +730,39 @@ li {
     border: 0;
     border-radius: 14px;
 }
+
+.editor-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.primary-button {
+    background: #315c3b;
+    color: white;
+    border: 2px solid #315c3b;
+    border-radius: 999px;
+    padding: 13px 22px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.primary-button:hover {
+    background: #4f7f58;
+    border-color: #4f7f58;
+}
+
+.save-message {
+    min-height: 1.5em;
+    font-weight: bold;
+}
+
+.save-message.success {
+    color: #315c3b;
+}
+
+.save-message.error {
+    color: #b33939;
+}
