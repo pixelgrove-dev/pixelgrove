@@ -1,0 +1,132 @@
+.worksheet {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 40px;
+
+    background: white;
+
+    border: 2px solid #c8d8c4;
+    border-radius: var(--radius-large);
+}
+
+.worksheet-header {
+    margin-bottom: 30px;
+    padding-bottom: 24px;
+
+    border-bottom: 3px solid #8fb996;
+
+    text-align: center;
+}
+
+.label {
+    color: var(--color-primary-light);
+
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+.date {
+    font-size: 1.1rem;
+}
+
+.worksheet section {
+    margin-bottom: 30px;
+}
+
+.info-box,
+.media-box,
+.questions,
+.answer-key {
+    padding: 22px;
+
+    border: 1px solid #d6e3d2;
+    border-radius: var(--radius-medium);
+}
+
+.answer-key {
+    background: #f4f8f3;
+}
+
+.media-placeholder {
+    display: grid;
+    place-items: center;
+
+    min-height: 180px;
+    padding: 20px;
+
+    border: 2px dashed #aac6a5;
+    border-radius: 12px;
+
+    color: #607466;
+    text-align: center;
+}
+
+.media-content {
+    display: grid;
+    gap: 16px;
+}
+
+.topic-image {
+    width: 100%;
+    max-height: 320px;
+
+    object-fit: contain;
+
+    background: #f4f8f3;
+
+    border: 1px solid #d6e3d2;
+    border-radius: 12px;
+}
+
+.video-link {
+    display: inline-block;
+    width: fit-content;
+    padding: 12px 18px;
+
+    background: var(--color-primary);
+    color: white;
+
+    border-radius: var(--radius-pill);
+
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.video-link:hover {
+    background: var(--color-primary-light);
+}
+
+.topic-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    max-width: 850px;
+    margin: 0 auto 20px;
+    padding: 18px;
+
+    background: white;
+
+    border: 2px solid #c8d8c4;
+    border-radius: var(--radius-medium);
+}
+
+.topic-selector label {
+    font-weight: bold;
+}
+
+.topic-selector select,
+.topic-selector button {
+    padding: 10px 12px;
+    font-size: 1rem;
+}
+
+#information p {
+    margin: 0;
+}
+
+#information p.paragraph-break {
+    padding-top: 2rem;
+}

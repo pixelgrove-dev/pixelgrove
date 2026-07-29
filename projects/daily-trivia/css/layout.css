@@ -1,0 +1,46 @@
+.app-header {
+    max-width: 850px;
+    margin: 0 auto 20px;
+    padding: 22px 26px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    background: var(--color-primary);
+    color: white;
+
+    border-radius: var(--radius-large);
+}
+
+.app-label {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 0.8rem;
+    opacity: 0.85;
+}
+
+.app-header h1 {
+    font-size: 1.8rem;
+}
+
+.version {
+    margin-top: 6px;
+    font-size: 0.9rem;
+    opacity: 0.75;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 700px) {
+    .app-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

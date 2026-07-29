@@ -5,6 +5,8 @@
 const urlParameters = new URLSearchParams(window.location.search);
 const topicId = urlParameters.get("topic");
 
+let currentTopicId = topicId;
+
 const difficultySelect = document.getElementById("difficulty");
 const saveTopicButton = document.getElementById("save-topic");
 const saveMessage = document.getElementById("save-message");
@@ -362,7 +364,7 @@ function collectTopicData() {
         .filter(item => item.question !== "");
 
     return {
-        id: crypto.randomUUID(),
+        id: currentTopicId || crypto.randomUUID(),
         title: topicTitleInput.value.trim(),
         category: categorySelect.value,
         difficulty: difficultySelect.value,
@@ -392,6 +394,7 @@ function validateTopic(topic) {
 
 function saveTopic() {
     const topic = collectTopicData();
+
     const validationMessage = validateTopic(topic);
 
     if (validationMessage) {
@@ -402,12 +405,22 @@ function saveTopic() {
 
     const savedTopics = getTopics();
 
-    savedTopics.push(topic);
+    const existingIndex = savedTopics.findIndex(saved =>
+        saved.id === topic.id
+    );
+
+    if (existingIndex >= 0) {
+        savedTopics[existingIndex] = topic;
+    } else {
+        savedTopics.push(topic);
+        currentTopicId = topic.id;
+    }
 
     saveTopics(savedTopics);
-    
 
-    saveMessage.textContent = `"${topic.title}" was saved successfully.`;
+    saveMessage.textContent =
+        `"${topic.title}" was saved successfully.`;
+
     saveMessage.className = "save-message success";
 }
 
@@ -419,6 +432,8 @@ function loadTopicIntoEditor(topic) {
     youtubeUrlInput.value = topic.youtube || "";
 
     paragraphContainer.innerHTML = "";
+    document.getElementById("editor-status").textContent =
+    "Editing Existing Topic";
     
     const paragraphs =
     topic.information && topic.information.length > 0 

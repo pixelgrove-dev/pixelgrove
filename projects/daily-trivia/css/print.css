@@ -1,0 +1,24 @@
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .no-print,
+    .app-header,
+    .topic-selector {
+        display: none;
+    }
+
+    .worksheet {
+        max-width: none;
+
+        border: none;
+        border-radius: 0;
+    }
+
+    .answer-key {
+        break-before: page;
+        page-break-before: always;
+    }
+}

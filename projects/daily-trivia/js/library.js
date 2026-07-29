@@ -1,11 +1,10 @@
-const topicGrid =
-    document.getElementById("topic-grid");
-
-const topics = getTopics();
+const topicGrid = document.getElementById("topic-grid");
 
 renderTopics();
 
 function renderTopics() {
+
+    const topics = getTopics();
 
     topicGrid.innerHTML = "";
 
@@ -15,42 +14,65 @@ function renderTopics() {
     }
 
     topics.forEach(topic => {
-        const card = document.createElement("div");
 
+        const card = document.createElement("div");
+        
         card.className = "topic-card";
 
         card.innerHTML = `
-        <h2>📁 ${topic.title}</h2>
+            <h2>📁 ${topic.title}</h2>
+
+            <p>
+                <strong>Category:</strong>
+                ${topic.category}
+            </p>
+
+            <p>
+                <strong>Reading:</strong>
+                ${topic.information.length} paragraph(s)
+            </p>
+
+            <p>
+                <strong>Questions:</strong>
+                ${topic.questions.length}
+            </p>
+
+            <div class="topic-actions">
+                <button class="open-topic" type="button">
+                    Open
+                </button>
+                <button class="delete-topic" type="button">
+                    Delete
+                </button>
+        `;
+
+        const openButton = card.querySelector(".open-topic");
+        const deleteButton = card.querySelector(".delete-topic");
         
-        <p>
-            <strong>Category:</strong>
-            ${topic.category}
-        </p>
+        openButton.addEventListener("click", () => {
 
-        <p>
-            <strong>Reading:</strong>
-            ${topic.information.length}
-            paragraph(s)
-        </p>
+        window.location.href =
+            `editor.html?topic=${encodeURIComponent(topic.id)}`;
+        });
 
-        p>
-            <strong>Questions:</strong>
-            ${topic.questions.length}
-        </p>
-
-        <button class="open-topic" type="button">
-            Open Topic
-        </button>
-    `;
-
-    const openButton = card.querySelector(".open-topic");
-
-    openButton.addEventListener("click", () => {
-        window.location.href = `editor.html?topic=${encodeURIComponent(topic.id)}`
-    });
-
-    topicGrid.appendChild(card);
+        deleteButton.addEventListener("click", () => {
+            const confirmed = confirm(
+                `Delete "${topic.title}"?`
+            );
+            if (!confirmed) {
+                return;
+            }
+            const topics = getTopics();
+            const updatedTopics =
+            topics.filter(savedTopic =>
+                savedTopic.id !== topic.id
+            );
+            
+            saveTopics(updatedTopics);
+            
+            renderTopics();
+        });
         
+        topicGrid.appendChild(card);
     });
-
 }
