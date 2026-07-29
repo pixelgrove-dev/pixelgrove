@@ -1,5 +1,4 @@
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
@@ -232,6 +231,16 @@ li {
 /*==================================================
     TOPIC LIBRARY
 ==================================================*/
+
+.header-actions {
+
+    display: flex;
+
+    gap: 12px;
+
+    align-items: center;
+
+}
 
 .topic-library {
     max-width: 850px;
@@ -827,4 +836,12 @@ li {
 
     margin-bottom:10px;
 
+}
+
+#information p {
+  margin: 0;
+}
+
+#information p.paragraph-break {
+  padding-top: 2rem;
 }

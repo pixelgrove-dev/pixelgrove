@@ -2,6 +2,9 @@
     ELEMENT REFERENCES
 ==================================================*/
 
+const urlParameters = new URLSearchParams(window.location.search);
+const topicId = urlParameters.get("topic");
+
 const difficultySelect = document.getElementById("difficulty");
 const saveTopicButton = document.getElementById("save-topic");
 const saveMessage = document.getElementById("save-message");
@@ -29,16 +32,6 @@ const addQuestionButton = document.getElementById("add-question");
 const previewReading = document.getElementById("preview-reading");
 
 
-paragraphContainer.innerHTML = "";
-
-paragraphContainer.appendChild(
-    createParagraph("Enter the first paragraph...")
-);
-
-questionContainer.appendChild(
-    createQuestionCard()
-);
-
 /*==================================================
     PARAGRAPH CREATION
 ==================================================*/
@@ -54,11 +47,13 @@ function createParagraph(placeholder = "Enter another paragraph...") {
     textarea.addEventListener("input", updatePreview);
 
     const removeButton = document.createElement("button");
+    removeButton.type = "button"
     removeButton.className = "remove-button";
     removeButton.textContent = "Remove";
 
     removeButton.addEventListener("click", () => {
         wrapper.remove();
+        updatePreview();
     });
 
     wrapper.appendChild(textarea);
@@ -164,6 +159,34 @@ function getYouTubeEmbedUrl(url) {
     return "";
 }
 
+if (topicId) {
+  const savedTopic = getTopicById(topicId);
+
+  if (savedTopic) {
+    loadTopicIntoEditor(savedTopic);
+  } else {
+    paragraphContainer.appendChild(
+      createParagraph("Enter the first paragraph...")
+    );
+
+    questionContainer.appendChild(
+      createQuestionCard()
+    );
+
+    updatePreview();
+  }
+} else {
+  paragraphContainer.appendChild(
+    createParagraph("Enter the first paragraph...")
+  );
+
+  questionContainer.appendChild(
+    createQuestionCard()
+  );
+
+  updatePreview();
+}
+
 function updatePreview() {
 
     previewTitle.textContent =
@@ -172,6 +195,10 @@ function updatePreview() {
     previewCategory.textContent =
         categorySelect.value;
 
+    /*
+        Reading preview
+    */
+
     previewReading.innerHTML = "";
 
     const paragraphs =
@@ -179,71 +206,115 @@ function updatePreview() {
 
     paragraphs.forEach(textarea => {
 
-        if(textarea.value.trim() === "")
+        if (textarea.value.trim() === "") {
             return;
+        }
 
-        const p =
+        const paragraph =
             document.createElement("p");
 
-        p.textContent =
+        paragraph.textContent =
             textarea.value;
 
-        previewReading.appendChild(p);
-
-        previewQuestions.innerHTML = "";
-        previewAnswers.innerHTML = "";
-        
-        const questionCards = questionContainer.querySelectorAll(".question-card");
-        
-        questionCards.forEach(card => {
-            const question =
-            card.querySelector(".question-input").value.trim();
-
-            const answer =
-            card.querySelector(".answer-input").value.trim();
-            
-            const difficulty =
-            card.querySelector(".question-difficulty").value;
-            
-            if (question !== "") {
-                const questionItem = document.createElement("li");
-                questionItem.innerHTML = `${question}
-                <span class="preview-difficulty">
-                ${difficulty}
-                </span>
-                `;
-                previewQuestions.appendChild(questionItem);
-            }
-            if (answer !== "") {
-                const answerItem = document.createElement("li");
-                answerItem.textContent = answer;
-                previewAnswers.appendChild(answerItem);
-            }
-        });
+        previewReading.appendChild(paragraph);
 
     });
-        previewMedia.innerHTML = "";
-        const imageUrl = imageUrlInput.value.trim();
-        const youtubeUrl = youtubeUrlInput.value.trim();
-    
-        if (imageUrl !== "") {
-            const image = document.createElement("img");
 
-            image.src = imageUrl;
-            image.alt = topicTitleInput.value || "Trivia topic image";
-            image.className = "preview-image";
+    /*
+        Question and answer preview
+    */
 
-            image.addEventListener("error", () => {
+    previewQuestions.innerHTML = "";
+    previewAnswers.innerHTML = "";
+
+    const questionCards =
+        questionContainer.querySelectorAll(".question-card");
+
+    questionCards.forEach(card => {
+
+        const question =
+            card.querySelector(".question-input")
+                .value
+                .trim();
+
+        const answer =
+            card.querySelector(".answer-input")
+                .value
+                .trim();
+
+        const difficulty =
+            card.querySelector(".question-difficulty")
+                .value;
+
+        if (question !== "") {
+
+            const questionItem =
+                document.createElement("li");
+
+            questionItem.innerHTML = `
+                ${question}
+                <span class="preview-difficulty">
+                    ${difficulty}
+                </span>
+            `;
+
+            previewQuestions.appendChild(questionItem);
+
+        }
+
+        if (answer !== "") {
+
+            const answerItem =
+                document.createElement("li");
+
+            answerItem.textContent = answer;
+
+            previewAnswers.appendChild(answerItem);
+
+        }
+
+    });
+
+    /*
+        Media preview
+    */
+
+    previewMedia.innerHTML = "";
+
+    const imageUrl =
+        imageUrlInput.value.trim();
+
+    const youtubeUrl =
+        youtubeUrlInput.value.trim();
+
+    if (imageUrl !== "") {
+
+        const image =
+            document.createElement("img");
+
+        image.src = imageUrl;
+
+        image.alt =
+            topicTitleInput.value ||
+            "Trivia topic image";
+
+        image.className = "preview-image";
+
+        image.addEventListener("error", () => {
             image.remove();
         });
 
         previewMedia.appendChild(image);
+
     }
-    
-    const youtubeEmbedUrl = getYouTubeEmbedUrl(youtubeUrl);
-    
+
+    const youtubeEmbedUrl =
+        getYouTubeEmbedUrl(youtubeUrl);
+
     if (youtubeEmbedUrl !== "") {
-        const videoFrame = document.createElement("iframe");
+
+        const videoFrame =
+            document.createElement("iframe");
 
         videoFrame.src = youtubeEmbedUrl;
         videoFrame.title = "Related trivia video";
@@ -252,7 +323,9 @@ function updatePreview() {
         videoFrame.allowFullscreen = true;
 
         previewMedia.appendChild(videoFrame);
+
     }
+
 }
 
 function collectTopicData() {
@@ -329,14 +402,64 @@ function saveTopic() {
 
     const savedTopics = getTopics();
 
-    savedTopics.push(topic)
+    savedTopics.push(topic);
 
-    savedTopics(savedTopics);
+    saveTopics(savedTopics);
     
 
     saveMessage.textContent = `"${topic.title}" was saved successfully.`;
     saveMessage.className = "save-message success";
 }
+
+function loadTopicIntoEditor(topic) {
+    topicTitleInput.value = topic.title || "";
+    categorySelect.value = topic.category || "Animals";
+    difficultySelect.value = topic.difficulty || "Easy";
+    imageUrlInput.value = topic.image || "";
+    youtubeUrlInput.value = topic.youtube || "";
+
+    paragraphContainer.innerHTML = "";
+    
+    const paragraphs =
+    topic.information && topic.information.length > 0 
+    ? topic.information
+    : [""];
+    
+    paragraphs.forEach(paragraphText => {
+        const paragraph = createParagraph();
+        const textarea = paragraph.querySelector(".reading-paragraph");
+        
+        textarea.value = paragraphText;
+
+        paragraphContainer.appendChild(paragraph);
+    });
+    
+    questionContainer.innerHTML = "";
+    
+    const questions = topic.questions && topic.questions.length > 0
+      ? topic.questions
+      : [
+          {
+            question: "",
+            answer: "",
+            difficulty: "Easy"
+          }
+        ];
+
+        questions.forEach(questionData => {
+            const card = createQuestionCard();
+
+        card.querySelector(".question-input").value = questionData.question || "";
+        card.querySelector(".answer-input").value = questionData.answer || "";
+        
+        card.querySelector(".question-difficulty").value = questionData.difficulty || "Easy";
+        questionContainer.appendChild(card);
+    });
+
+  renumberQuestions();
+  updatePreview();
+}
+
 /*==================================================
     EVENTS
 ==================================================*/
@@ -350,13 +473,6 @@ addParagraphButton.addEventListener("click", () => {
 
 });
 
-addQuestionButton.addEventListener("click", () => {
-
-    questionContainer.appendChild(
-        createQuestionCard()
-    );
-
-});
 
 topicTitleInput.addEventListener("input", updatePreview);
 

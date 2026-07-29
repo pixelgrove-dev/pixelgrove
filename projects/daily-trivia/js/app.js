@@ -62,11 +62,23 @@ function renderWorksheet(topic) {
   questionList.innerHTML = "";
   answerList.innerHTML = "";
 
-  topic.information.forEach(paragraph => {
+  let addParagraphBreak = false;
+
+  topic.information.forEach(text => {
+    if (text.trim() === "") {
+      addParagraphBreak = true;
+      return;
+    }
     const p = document.createElement("p");
-    p.textContent = paragraph;
+    p.textContent = text;
+    
+    if (addParagraphBreak) {
+      p.classList.add("paragraph-break");
+      addParagraphBreak = false;
+    }
+
     information.appendChild(p);
-  });
+});
 
   topic.questions.forEach(question => {
     const li = document.createElement("li");

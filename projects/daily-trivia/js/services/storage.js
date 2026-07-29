@@ -16,3 +16,9 @@ function saveTopics(topics) {
     );
 
 }
+
+function getTopicById(id) {
+    const topics = getTopics();
+
+    return topics.find(topic => topic.id === id);
+}
