@@ -1,3 +1,12 @@
+/**
+ * Legacy in-memory topic data used by the printable worksheet page.
+ *
+ * Saved topics created in the editor follow a separate data flow through
+ * localStorage; keeping this distinction explicit avoids confusing seed content
+ * with user-created library records.
+ *
+ * @type {Array<Object>}
+ */
 const triviaTopics = [
   {
     id: "Herons",
@@ -214,9 +223,51 @@ const triviaTopics = [
         "False. Sloths are excellent swimmers and can move through water faster than they move through trees.",
         "Possible answers include jaguars, harpy eagles, or large snakes."
     ]
-  }
+  },
+  {
+    id: "Raccoon",
+    title: "Raccoon",
+    topic: "Nature",
+    category: "Animal",
+    date: "Date: July, 9, 2026",
+    image: "/projects/daily-trivia/images/raccoon.jpg",
+    youtube: "https://www.youtube.com/embed/1lViKrWgTYk?si=0jGFxEidMZ6wxz9C",
+    information: [
+        "🦝 Meet the Curious Raccoon!",
+        "",
+        "Raccoons are one of North America's most recognizable wild animals, famous for the black `mask` around their eyes and their fluffy, ringed tails.These clever mammals can live in forests, wetlands, farms, and even busy cities, where they often search for food after the sun goes down. Raccoons are omnivores, which means they eat both plants and animals. Their menu can include fruits, nuts, insects, frogs, bird eggs, fish, and even leftovers they find in trash cans.Their front paws are incredibly sensitive and almost work like tiny hands, allowing them to open containers, turn doorknobs, and solve simple puzzles.",
+        "",
+        "Raccoons are known for their intelligence and excellent memory. Studies have shown they can remember solutions to problems for years, making them some of the smartest animals in the wild. Although many people believe raccoons always wash their food before eating, that isn't actually true. When food is near water, they often dip it because wetting their paws helps them gather more information about what they are holding. Most raccoons are active at night, and while they may look cute and cuddly, they are wild animals that should always be admired from a safe distance.",
+        "",
+        "🦝 Fun Raccoon Trivia.",
+        "",
+        "A raccoon's scientific name, Procyon lotor, means 'washing bear.'",
+        "Raccoons have five fingers on each front paw, almost like a human hand",
+        "Can climb trees headfirst by rotating their hind feet nearly 180 degrees.",
+        "A raccoon's tail usually has 5 to 10 black rings.",
+        "Baby raccoons are called kits or cubs.",
+        "Raccoons are excellent swimmers and can also run up to 15 miles per hour.",
+        "Despite their curious nature, raccoons are generally shy and prefer to avoid people whenever possible."
+    ],
+    questions: [
+        "What is the black marking around a raccoon's eyes often called?",
+        "What does it mean that raccoons are omnivores?",
+        "Why are raccoons considered to be very intelligent?",
+        "True or False: Raccoons always wash their food before they eat it.",
+        "Name one interesting ability that helps raccoons survive in the wild."
+    ],
+    answers: [
+        "A mask.",
+        "They eat both plants and animals.",
+        "They can solve problems and remember the solutions for years.",
+        "False. They often dip food in water because wetting their paws helps them sense what they are holding, not because they are washing it.",
+        "Possible Answers: They can climb trees headfirst, use their sensitive front paws like hands, swim well, run up to 15 mph, or remember how to solve problems."
+    ]
+  },
 ];
 
+// Copy this shape when adding legacy worksheet topics so app.js can rely on a
+// consistent set of fields without introducing special-case rendering.
 //{
     //id: "",
     //title: "",

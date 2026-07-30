@@ -1,3 +1,10 @@
+/**
+ * Coordinates the legacy topic catalog with the interactive worksheet view.
+ *
+ * Topic data must load before this script because the page intentionally keeps
+ * static content separate from rendering behavior.
+ */
+
 /*==================================================
     ELEMENT REFERENCES
 ==================================================*/
@@ -18,7 +25,18 @@ const answerList = document.getElementById("answer-list");
     FUNCTIONS
 ==================================================*/
 
+/**
+ * Populates the topic selector from the available trivia data.
+ *
+ * @returns {void}
+ */
 function fillTopicSelector() {
+  /**
+   * Adds one selectable option for a trivia topic.
+   *
+   * @param {Object} topic - Topic represented by the option.
+   * @returns {void}
+   */
   triviaTopics.forEach(topic => {
     const option = document.createElement("option");
 
@@ -29,6 +47,12 @@ function fillTopicSelector() {
   });
 }
 
+/**
+ * Replaces the worksheet contents with data from the selected topic.
+ *
+ * @param {Object} topic - Trivia topic to display.
+ * @returns {void}
+ */
 function renderWorksheet(topic) {
   topicTitle.textContent = topic.title;
   topicDate.textContent = topic.date;
@@ -62,8 +86,16 @@ function renderWorksheet(topic) {
   questionList.innerHTML = "";
   answerList.innerHTML = "";
 
+  // Empty entries act as formatting markers, allowing source data to separate
+  // paragraph groups without rendering blank DOM elements.
   let addParagraphBreak = false;
 
+  /**
+   * Renders a reading paragraph or records a break for the next paragraph.
+   *
+   * @param {string} text - Reading entry from the topic.
+   * @returns {void}
+   */
   topic.information.forEach(text => {
     if (text.trim() === "") {
       addParagraphBreak = true;
@@ -80,12 +112,24 @@ function renderWorksheet(topic) {
     information.appendChild(p);
 });
 
+  /**
+   * Adds a question to the printable worksheet.
+   *
+   * @param {string} question - Question text to display.
+   * @returns {void}
+   */
   topic.questions.forEach(question => {
     const li = document.createElement("li");
     li.textContent = question;
     questionList.appendChild(li);
   });
 
+  /**
+   * Adds an answer to the worksheet's answer key.
+   *
+   * @param {string} answer - Answer text to display.
+   * @returns {void}
+   */
   topic.answers.forEach(answer => {
     const li = document.createElement("li");
     li.textContent = answer;
@@ -93,14 +137,37 @@ function renderWorksheet(topic) {
   });
 }
 
+/**
+ * Resolves the currently selected topic from the shared trivia data.
+ *
+ * @returns {Object|undefined} Selected topic, or `undefined` when no ID matches.
+ */
 function getSelectedTopic() {
+  /**
+   * Matches selector values to topic identifiers without type coercion.
+   *
+   * @param {Object} topic - Topic being considered.
+   * @returns {boolean} Whether the topic is currently selected.
+   */
   return triviaTopics.find(topic => topic.id === topicSelect.value);
 }
 
+/**
+ * Builds the collection of topic cards shown in the library.
+ *
+ * @returns {void}
+ */
 function buildTopicLibrary() {
 
+    // Rebuilding from an empty container prevents duplicate cards on repeated calls.
     topicLibrary.innerHTML = "";
 
+    /**
+     * Creates an interactive library card for a trivia topic.
+     *
+     * @param {Object} topic - Topic represented by the card.
+     * @returns {void}
+     */
     triviaTopics.forEach(topic => {
 
         const card = document.createElement("div");
@@ -120,6 +187,11 @@ function buildTopicLibrary() {
 
         const button = card.querySelector("button");
 
+        /**
+         * Opens the topic associated with this card in the shared worksheet view.
+         *
+         * @returns {void}
+         */
         button.addEventListener("click", () => {
 
             renderWorksheet(topic);
@@ -142,11 +214,21 @@ buildTopicLibrary();
 
 renderWorksheet(triviaTopics[0]);
 
+/**
+ * Loads the selector's current topic into the worksheet.
+ *
+ * @returns {void}
+ */
 loadTopicButton.addEventListener("click", () => {
   const selectedTopic = getSelectedTopic();
   renderWorksheet(selectedTopic);
 });
 
+/**
+ * Opens the browser print workflow for the rendered worksheet.
+ *
+ * @returns {void}
+ */
 printButton.addEventListener("click", () => {
   window.print();
 });

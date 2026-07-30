@@ -1,3 +1,10 @@
+/**
+ * Manages topic editing, validation, persistence, and the live worksheet preview.
+ *
+ * Keeping these interactions together ensures form changes and preview output
+ * remain synchronized through one browser-side controller.
+ */
+
 /*==================================================
     ELEMENT REFERENCES
 ==================================================*/
@@ -38,6 +45,13 @@ const previewReading = document.getElementById("preview-reading");
     PARAGRAPH CREATION
 ==================================================*/
 
+/**
+ * Builds an editable reading paragraph with preview and removal behavior.
+ *
+ * @param {string} [placeholder="Enter another paragraph..."] - Guidance shown
+ * when the paragraph is empty.
+ * @returns {HTMLDivElement} The complete paragraph editor row.
+ */
 function createParagraph(placeholder = "Enter another paragraph...") {
 
     const wrapper = document.createElement("div");
@@ -53,6 +67,11 @@ function createParagraph(placeholder = "Enter another paragraph...") {
     removeButton.className = "remove-button";
     removeButton.textContent = "Remove";
 
+    /**
+     * Removes this paragraph and immediately reconciles the preview.
+     *
+     * @returns {void}
+     */
     removeButton.addEventListener("click", () => {
         wrapper.remove();
         updatePreview();
@@ -68,6 +87,11 @@ function createParagraph(placeholder = "Enter another paragraph...") {
     QUESTION CARD
 ==================================================*/
 
+/**
+ * Builds a question editor card and connects it to the live preview.
+ *
+ * @returns {HTMLDivElement} The complete question editor card.
+ */
 function createQuestionCard() {
     const wrapper = document.createElement("div");
     wrapper.className = "question-card";
@@ -112,6 +136,11 @@ function createQuestionCard() {
     answerInput.addEventListener("input", updatePreview);
     difficultySelect.addEventListener("change", updatePreview);
 
+    /**
+     * Removes this card and restores sequential numbering for the remaining cards.
+     *
+     * @returns {void}
+     */
     removeButton.addEventListener("click", () => {
         wrapper.remove();
         renumberQuestions();
@@ -121,10 +150,22 @@ function createQuestionCard() {
     return wrapper;
 }
 
+/**
+ * Updates question headings so their displayed order matches their DOM order.
+ *
+ * @returns {void}
+ */
 function renumberQuestions() {
 
     const cards = questionContainer.querySelectorAll(".question-card");
 
+    /**
+     * Assigns a human-friendly, one-based label after cards are removed or added.
+     *
+     * @param {Element} card - Question card being relabeled.
+     * @param {number} index - Zero-based position of the card.
+     * @returns {void}
+     */
     cards.forEach((card, index) => {
 
         card.querySelector("h4").textContent =
@@ -134,6 +175,15 @@ function renumberQuestions() {
 
 }
 
+/**
+ * Converts a supported YouTube watch or short URL into an embeddable URL.
+ *
+ * Invalid and unsupported URLs intentionally produce an empty string so the
+ * preview can omit the video without interrupting editor input.
+ *
+ * @param {string} url - User-provided YouTube URL.
+ * @returns {string} An embed URL, or an empty string when none can be derived.
+ */
 function getYouTubeEmbedUrl(url) {
     if (!url) {
         return "";
@@ -142,6 +192,7 @@ function getYouTubeEmbedUrl(url) {
     try {
         const parsedUrl = new URL(url);
 
+        // Short links store the video ID in the path instead of a query parameter.
         if (parsedUrl.hostname.includes("youtu.be")) {
             const videoId = parsedUrl.pathname.slice(1);
             return `https://www.youtube.com/embed/${videoId}`;
@@ -155,12 +206,14 @@ function getYouTubeEmbedUrl(url) {
             }
         }
     } catch (error) {
+        // URLs are entered incrementally, so malformed intermediate values are expected.
         return "";
     }
 
     return "";
 }
 
+// A topic query parameter switches the editor from creation mode to edit mode.
 if (topicId) {
   const savedTopic = getTopicById(topicId);
 
@@ -189,6 +242,11 @@ if (topicId) {
   updatePreview();
 }
 
+/**
+ * Rebuilds the visible topic preview from the current editor field values.
+ *
+ * @returns {void}
+ */
 function updatePreview() {
 
     previewTitle.textContent =
@@ -206,6 +264,12 @@ function updatePreview() {
     const paragraphs =
         document.querySelectorAll(".reading-paragraph");
 
+    /**
+     * Adds only meaningful paragraphs so blank editor rows do not create gaps.
+     *
+     * @param {HTMLTextAreaElement} textarea - Paragraph input to render.
+     * @returns {void}
+     */
     paragraphs.forEach(textarea => {
 
         if (textarea.value.trim() === "") {
@@ -232,6 +296,12 @@ function updatePreview() {
     const questionCards =
         questionContainer.querySelectorAll(".question-card");
 
+    /**
+     * Renders independently populated questions and answers in their previews.
+     *
+     * @param {Element} card - Question card whose current values are rendered.
+     * @returns {void}
+     */
     questionCards.forEach(card => {
 
         const question =
@@ -248,6 +318,7 @@ function updatePreview() {
             card.querySelector(".question-difficulty")
                 .value;
 
+        // Questions and answers are independent so partially completed cards remain useful.
         if (question !== "") {
 
             const questionItem =
@@ -302,6 +373,11 @@ function updatePreview() {
 
         image.className = "preview-image";
 
+        /**
+         * Hides broken images rather than leaving a failed-media icon in the preview.
+         *
+         * @returns {void}
+         */
         image.addEventListener("error", () => {
             image.remove();
         });
@@ -330,16 +406,39 @@ function updatePreview() {
 
 }
 
+/**
+ * Serializes the editor state into the topic shape used by persistent storage.
+ *
+ * @returns {Object} A normalized topic ready for validation and storage.
+ */
 function collectTopicData() {
     const paragraphs = Array.from(
         document.querySelectorAll(".reading-paragraph")
     )
+        /**
+         * Normalizes paragraph whitespace before empty entries are discarded.
+         *
+         * @param {HTMLTextAreaElement} textarea - Paragraph input to normalize.
+         * @returns {string} Trimmed paragraph text.
+         */
         .map(textarea => textarea.value.trim())
+        /**
+         * Prevents unused paragraph rows from being persisted.
+         *
+         * @param {string} paragraph - Normalized paragraph text.
+         * @returns {boolean} Whether the paragraph contains content.
+         */
         .filter(paragraph => paragraph !== "");
 
     const questions = Array.from(
         document.querySelectorAll(".question-card")
     )
+        /**
+         * Converts a question card into the storage representation.
+         *
+         * @param {Element} card - Question card to serialize.
+         * @returns {{question: string, answer: string, difficulty: string}} Serialized question.
+         */
         .map(card => {
             const question = card
                 .querySelector(".question-input")
@@ -361,9 +460,16 @@ function collectTopicData() {
                 difficulty
             };
         })
+        /**
+         * Excludes unfinished cards because a question is the minimum usable entry.
+         *
+         * @param {{question: string}} item - Serialized question candidate.
+         * @returns {boolean} Whether the entry includes a question.
+         */
         .filter(item => item.question !== "");
 
     return {
+        // Reusing the ID is what makes saving an edited topic replace the original.
         id: currentTopicId || crypto.randomUUID(),
         title: topicTitleInput.value.trim(),
         category: categorySelect.value,
@@ -376,6 +482,12 @@ function collectTopicData() {
     };
 }
 
+/**
+ * Checks whether a topic contains the minimum content required for saving.
+ *
+ * @param {Object} topic - Normalized topic data to validate.
+ * @returns {string} A user-facing validation message, or an empty string if valid.
+ */
 function validateTopic(topic) {
     if (!topic.title) {
         return "Please enter a topic title.";
@@ -392,6 +504,11 @@ function validateTopic(topic) {
     return "";
 }
 
+/**
+ * Validates and persists the current topic, then reports the result to the user.
+ *
+ * @returns {void}
+ */
 function saveTopic() {
     const topic = collectTopicData();
 
@@ -405,25 +522,50 @@ function saveTopic() {
 
     const savedTopics = getTopics();
 
+    /**
+     * Locates an existing record so edits do not create duplicate topics.
+     *
+     * @param {Object} saved - Previously persisted topic.
+     * @returns {boolean} Whether the stored topic has the current topic's ID.
+     */
     const existingIndex = savedTopics.findIndex(saved =>
         saved.id === topic.id
     );
 
+    const currentTime = new Date().toISOString();
+    // Preserve the original creation timestamp when editing.
+
     if (existingIndex >= 0) {
+
+        const existingTopic = savedTopics[existingIndex];
+        topic.createdAt = existingTopic.createdAt || currentTime;
+
+        topic.updatedAt = currentTime;
+
         savedTopics[existingIndex] = topic;
     } else {
-        savedTopics.push(topic);
-        currentTopicId = topic.id;
-    }
 
-    saveTopics(savedTopics);
+        topic.createdAt = currentTime;
 
-    saveMessage.textContent =
-        `"${topic.title}" was saved successfully.`;
+    topic.updatedAt = currentTime;
 
-    saveMessage.className = "save-message success";
+    savedTopics.push(topic);
+
+    currentTopicId = topic.id;
 }
 
+saveTopics(savedTopics);
+
+saveMessage.textContent = `"${topic.title}" was saved successfully.`;
+saveMessage.className = "save-message success";
+}
+
+/**
+ * Populates the editor from a stored topic while providing safe empty defaults.
+ *
+ * @param {Object} topic - Stored topic to edit.
+ * @returns {void}
+ */
 function loadTopicIntoEditor(topic) {
     topicTitleInput.value = topic.title || "";
     categorySelect.value = topic.category || "Animals";
@@ -435,11 +577,18 @@ function loadTopicIntoEditor(topic) {
     document.getElementById("editor-status").textContent =
     "Editing Existing Topic";
     
+    // Keep one editable row available even when older data has no reading content.
     const paragraphs =
     topic.information && topic.information.length > 0 
     ? topic.information
     : [""];
     
+    /**
+     * Recreates a paragraph editor row from stored text.
+     *
+     * @param {string} paragraphText - Stored paragraph content.
+     * @returns {void}
+     */
     paragraphs.forEach(paragraphText => {
         const paragraph = createParagraph();
         const textarea = paragraph.querySelector(".reading-paragraph");
@@ -451,6 +600,7 @@ function loadTopicIntoEditor(topic) {
     
     questionContainer.innerHTML = "";
     
+    // A default card keeps the editor usable for topics saved without questions.
     const questions = topic.questions && topic.questions.length > 0
       ? topic.questions
       : [
@@ -461,6 +611,12 @@ function loadTopicIntoEditor(topic) {
           }
         ];
 
+        /**
+         * Recreates a question card from its stored representation.
+         *
+         * @param {Object} questionData - Stored question values.
+         * @returns {void}
+         */
         questions.forEach(questionData => {
             const card = createQuestionCard();
 
@@ -480,6 +636,11 @@ function loadTopicIntoEditor(topic) {
 ==================================================*/
 saveTopicButton.addEventListener("click", saveTopic);
 
+/**
+ * Adds another reading input while leaving preview updates to subsequent input.
+ *
+ * @returns {void}
+ */
 addParagraphButton.addEventListener("click", () => {
 
     paragraphContainer.appendChild(
@@ -495,6 +656,11 @@ categorySelect.addEventListener("change", updatePreview);
 
 updatePreview();
 
+/**
+ * Adds a question card and refreshes the preview to keep both views synchronized.
+ *
+ * @returns {void}
+ */
 addQuestionButton.addEventListener("click", () => {
     questionContainer.appendChild(
         createQuestionCard()

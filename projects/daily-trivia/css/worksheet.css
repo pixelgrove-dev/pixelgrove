@@ -1,3 +1,7 @@
+/* ==========================================================================
+   Worksheet Surface and Header
+   ========================================================================== */
+
 .worksheet {
     max-width: 850px;
     margin: 0 auto;
@@ -34,6 +38,10 @@
     margin-bottom: 30px;
 }
 
+/* ==========================================================================
+   Worksheet Content Panels
+   ========================================================================== */
+
 .info-box,
 .media-box,
 .questions,
@@ -49,6 +57,7 @@
 }
 
 .media-placeholder {
+    /* place-items centers placeholder content across both grid axes. */
     display: grid;
     place-items: center;
 
@@ -97,6 +106,10 @@
     background: var(--color-primary-light);
 }
 
+/* ==========================================================================
+   Topic Selection Controls
+   ========================================================================== */
+
 .topic-selector {
     display: flex;
     align-items: center;
@@ -127,6 +140,7 @@
     margin: 0;
 }
 
+/* Blank data entries are translated into visual paragraph grouping by app.js. */
 #information p.paragraph-break {
     padding-top: 2rem;
 }

@@ -1,3 +1,8 @@
+/* ==========================================================================
+   Shared Stylesheet Entry Point
+   ========================================================================== */
+
+/* Import order allows later component rules to build on tokens and foundations. */
 @import url("variables.css");
 @import url("base.css");
 @import url("layout.css");

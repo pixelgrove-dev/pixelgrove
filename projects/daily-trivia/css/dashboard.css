@@ -1,56 +1,213 @@
-.dashboard {
-    max-width: 1000px;
-    margin: 40px auto;
+/* ==========================================================================
+   Dashboard Header
+   ========================================================================== */
+
+.dashboard-header {
+    padding: 4rem 1.5rem 2rem;
+    text-align: center;
 }
 
-.dashboard h2 {
-    color: var(--color-primary);
+.dashboard-header h1 {
+    margin: 0.4rem 0;
+    /* clamp() scales the heading fluidly while enforcing readable limits. */
+    font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+.dashboard-header p {
+    max-width: 650px;
+    margin: 0.75rem auto 0;
+}
+
+.dashboard-eyebrow {
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+/* ==========================================================================
+   Dashboard Layout and Statistics
+   ========================================================================== */
+
+.dashboard-container {
+    /* min() combines a fixed content cap with a viewport-aware gutter. */
+    width: min(1100px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding-bottom: 4rem;
+}
+
+.dashboard-stats {
+    display: grid;
+    /* auto-fit collapses unused tracks so cards expand naturally at each width. */
+    grid-template-columns:
+        repeat(auto-fit, minmax(180px, 1fr));
+
+    gap: 1rem;
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 1.4rem;
+
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 18px;
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.stat-card h2 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.stat-icon {
     font-size: 2rem;
 }
 
-.dashboard > p {
-    margin-top: 8px;
-    color: var(--color-text-muted);
+.stat-number {
+    margin: 0 0 0.25rem;
+    font-size: 2rem;
+    font-weight: 800;
 }
 
-.dashboard-grid {
+/* ==========================================================================
+   Quick Actions
+   ========================================================================== */
+
+.dashboard-actions {
+    margin-top: 3rem;
+}
+
+.section-heading {
+    margin-bottom: 1.25rem;
+}
+
+.section-heading h2 {
+    margin-bottom: 0.35rem;
+}
+
+.section-heading p {
+    margin: 0;
+}
+
+.action-grid {
     display: grid;
-    gap: 24px;
-    margin-top: 30px;
+    grid-template-columns:
+        repeat(auto-fit, minmax(260px, 1fr));
+
+    gap: 1rem;
 }
 
-.dashboard-card {
-    display: block;
-    padding: 24px;
+.action-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 1.5rem;
+
+    color: inherit;
+    text-decoration: none;
 
     background: white;
-    color: inherit;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 18px;
 
-    border: 2px solid var(--color-border);
-    border-radius: var(--radius-large);
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.06);
 
-    text-decoration: none;
-    transition: var(--transition-normal);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.dashboard-card:hover {
+.action-card:hover {
     transform: translateY(-4px);
-    border-color: var(--color-primary-light);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.1);
 }
 
-.dashboard-card h3 {
-    margin-bottom: 12px;
-    color: var(--color-primary);
+.action-card span {
+    font-size: 2.2rem;
 }
 
-.dashboard-card p {
-    color: var(--color-text-muted);
+.action-card h3 {
+    margin: 0 0 0.35rem;
 }
 
-.coming-soon {
-    opacity: 0.65;
+.action-card p {
+    margin: 0;
 }
 
-.coming-soon:hover {
-    transform: none;
+.recent-topics-section {
+    margin-top: 3rem;
+}
+
+.recent-topics-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 1rem;
+}
+
+.recent-topic-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 1.25rem;
+
+    color: inherit;
+    text-decoration: none;
+
+    background: white;
+
+    border:
+        1px solid rgba(0, 0, 0, 0.08);
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 8px 22px rgba(0, 0, 0, 0.05);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.recent-topic-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.09);
+}
+
+.recent-topic-icon {
+    font-size: 1.8rem;
+}
+
+.recent-topic-card h3 {
+    margin: 0 0 0.25rem;
+}
+
+.recent-topic-card p {
+    margin: 0;
+}
+
+.recent-topics-empty {
+    padding: 1.5rem;
+
+    background: white;
+
+    border:
+        1px dashed rgba(0, 0, 0, 0.18);
+
+    border-radius: 16px;
 }

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Grove Activity Studio Dashboard
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="css/main.css?v=1"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css?v=1"
+    >
+</head>
+
+<body>
+
+    <!-- Dashboard introduction -->
+    <header class="dashboard-header">
+
+        <div>
+
+            <p class="dashboard-eyebrow">
+                Pixel Grove
+            </p>
+
+            <h1>
+                🌳 Grove Activity Studio
+            </h1>
+
+            <p>
+                Create, organize, and prepare engaging
+                activities for residents.
+            </p>
+
+        </div>
+
+    </header>
+
+    <main class="dashboard-container">
+
+        <!-- Summary and navigation share one container to maintain consistent page width. -->
+        <!-- Statistics derived from topics in localStorage -->
+        <section class="dashboard-stats">
+
+            <article class="stat-card">
+                <span class="stat-icon">📚</span>
+
+                <div>
+                    <p
+                        id="stat-topics"
+                        class="stat-number"
+                    >
+                        0
+                    </p>
+
+                    <h2>Total Topics</h2>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <span class="stat-icon">⭐</span>
+
+                <div>
+                    <p
+                        id="stat-favorites"
+                        class="stat-number"
+                    >
+                        0
+                    </p>
+
+                    <h2>Favorites</h2>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <span class="stat-icon">📂</span>
+
+                <div>
+                    <p
+                        id="stat-categories"
+                        class="stat-number"
+                    >
+                        0
+                    </p>
+
+                    <h2>Categories</h2>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <span class="stat-icon">❓</span>
+
+                <div>
+                    <p
+                        id="stat-questions"
+                        class="stat-number"
+                    >
+                        0
+                    </p>
+
+                    <h2>Questions</h2>
+                </div>
+            </article>
+
+            <article class="stat-card">
+                <span class="stat-icon">📄</span>
+
+                <div>
+                    <p
+                        id="stat-paragraphs"
+                        class="stat-number"
+                    >
+                        0
+                    </p>
+
+                    <h2>Paragraphs</h2>
+                </div>
+            </article>
+
+        </section>
+
+        <section class="recent-topics-section">
+            <div class="section-heading">
+                <h2>Recent Topics</h2>
+
+                <p>Jump back into your latest activities.</p>
+            </div>
+            <div id="recent-topics" class="recent-topics-grid">
+
+            </div>
+        </section>
+
+        <!-- Primary dashboard navigation -->
+        <section class="dashboard-actions">
+
+            <div class="section-heading">
+                <h2>Quick Actions</h2>
+
+                <p>
+                    Choose where you would like to begin.
+                </p>
+            </div>
+
+            <div class="action-grid">
+
+                <a
+                    class="action-card"
+                    href="editor.html"
+                >
+                    <span>🌱</span>
+
+                    <div>
+                        <h3>Create a Topic</h3>
+
+                        <p>
+                            Build a new activity and worksheet.
+                        </p>
+                    </div>
+                </a>
+
+                <a
+                    class="action-card"
+                    href="library.html"
+                >
+                    <span>📚</span>
+
+                    <div>
+                        <h3>Topic Library</h3>
+
+                        <p>
+                            Search, organize, and edit saved topics.
+                        </p>
+                    </div>
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Storage and aggregation services load before dashboard rendering -->
+    <script src="js/services/storage.js?v=3"></script>
+
+    <script
+        src="js/library/library-stats.js?v=3"
+    ></script>
+
+    <script src="js/dashboard.js?v=3"></script>
+
+</body>
+
+</html>

@@ -1,3 +1,8 @@
+/* ==========================================================================
+   Design Tokens
+   ========================================================================== */
+
+/* Centralized tokens keep color, spacing, and motion consistent across page-specific styles. */
 :root {
     --color-background: #eef3ed;
     --color-surface: #ffffff;

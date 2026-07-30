@@ -1,3 +1,8 @@
+/* ==========================================================================
+   Reset and Document Defaults
+   ========================================================================== */
+
+/* Border-box keeps declared dimensions predictable when padding is added. */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -11,6 +16,10 @@ body {
     line-height: 1.6;
     padding: 24px;
 }
+
+/* ==========================================================================
+   Typography and Content Defaults
+   ========================================================================== */
 
 h1 {
     font-size: 2.4rem;

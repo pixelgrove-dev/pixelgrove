@@ -14,6 +14,7 @@
 
 <div class="app-shell">
 
+    <!-- Editor identity and navigation -->
     <header class="app-header">
         <div>
 
@@ -30,14 +31,16 @@
             <a class="print-button" href="library.html">
                 📚 Topic Library
             </a>
-            <a class="print-button" href="index.html">
+            <a class="print-button" href="dashboard.html">
                 ← Dashboard
             </a>
         </div>
     </header>
 
+    <!-- Two-column editing workspace -->
     <section class="editor-layout">
 
+        <!-- Topic input controls -->
         <div class="editor-panel">
             <section class="editor">
                 <h2>Create a New Trivia Topic</h2>
@@ -105,6 +108,7 @@
             </section>
         </div>
         
+        <!-- Live worksheet preview updated by editor.js -->
         <div class="preview-panel">
             <section class="preview-section">
                 <h2>Live Worksheet Preview</h2>
@@ -132,7 +136,8 @@
         </div>
     </section>
 </div>
-<script src="js/services/storage.js"></script>
-<script src="js/editor.js"></script>
+<!-- Storage must load before editor logic reads or saves topics -->
+<script src="js/services/storage.js?v=1"></script>
+<script src="js/editor.js?v=1"></script>
 </body>
 </html>

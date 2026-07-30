@@ -14,12 +14,14 @@
 <body>
   <div class="app-shell">
   <div class="workspace">
+    <!-- Application controls excluded from the printed worksheet -->
     <header class="app-header no-print">
       <div>
         <p class="app-label">Resident Activity Tool</p>
         <h1>Activity Studio</h1>
       </div>
-
+      
+      <button id="back-button" class="back-button" onclick="history.back()">Back</button>
       <button id="print-worksheet" class="print-button">Print Worksheet</button>
     </header>
 
@@ -29,6 +31,7 @@
       <button id="load-topic">Load Topic</button>
     </section>
 
+    <!-- Quick-access topic library -->
     <section class="topic-library no-print">
 
       <div class="library-header">
@@ -42,6 +45,7 @@
 
   </div>
     
+  <!-- Printable worksheet content populated by app.js -->
   <main class="worksheet">
     
     <header class="worksheet-header">
@@ -78,6 +82,7 @@
       <ol id="answer-list"></ol>
     </section>
   </main>
+<!-- Topic data must load before the worksheet rendering logic -->
 <script src="js/data.js"></script>
 <script src="js/app.js"></script>
 </div>

@@ -1,4 +1,9 @@
+/* ==========================================================================
+   Print-Only Worksheet Adjustments
+   ========================================================================== */
+
 @media print {
+    /* Printed worksheets omit application chrome so only facilitator content remains. */
     body {
         background: white;
         padding: 0;
@@ -18,6 +23,7 @@
     }
 
     .answer-key {
+        /* Modern and legacy properties keep the answer key on its own printed page. */
         break-before: page;
         page-break-before: always;
     }

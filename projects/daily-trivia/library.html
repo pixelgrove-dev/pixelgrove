@@ -18,19 +18,52 @@
 
 <body>
 
-<div class="library-page">
+    <!-- Saved-topic library -->
+    <div class="library-page">
 
-    <h1>📚 Topic Library</h1>
+        <h1>📚 Topic Library</h1>
 
-    <p>
-        Every worksheet you save appears here.
-    </p>
+        <p>Every worksheet you save appears here.</p>
 
-    <div id="topic-grid"></div>
+        <!-- Search, category, and sort controls -->
+        <div class="library-tools">
+            <label for="topic-search">
+                Search topics
+            </label>
 
-</div>
-<script src="js/services/storage.js"></script>
-<script src="js/library.js"></script>
+             <label for="category-filter">
+                Filter by category
+            </label>
+
+            <select id="category-filter">
+                <option value="all">All categories</option>
+            </select>
+
+            <select id = "sort-filter">
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="az">A-Z</option>
+                <option value="za">Z-A</option>
+                <option value="favorites">Favorites First</option>
+            </select>
+
+            <input
+                id="topic-search"
+                type="search"
+                placeholder="Search by titl or category..."
+                autocomplete="off">
+
+        </div>
+
+        <!-- Topic cards are rendered here from localStorage -->
+        <div id="topic-grid"></div>
+    </div>
+
+    <!-- Dependencies load before the library controller that consumes them -->
+    <script src="js/services/storage.js?v=3"></script>
+    <script src="js/utils/topic-utils.js?v=1"></script>
+    <script src="js/library/library-filters.js?v=4"></script>
+    <script src="js/library.js?v=4"></script>
 
 </body>
 

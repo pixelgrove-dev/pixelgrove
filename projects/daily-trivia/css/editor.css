@@ -1,3 +1,7 @@
+/* ==========================================================================
+   Editor Form
+   ========================================================================== */
+
 .editor {
     max-width: 900px;
     margin: 40px auto;
@@ -74,6 +78,10 @@
     color: var(--color-primary);
 }
 
+/* ==========================================================================
+   Editor and Preview Layout
+   ========================================================================== */
+
 .editor-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -93,6 +101,7 @@
 }
 
 .preview-panel {
+    /* Sticky positioning keeps the preview visible while editing long forms. */
     position: sticky;
     top: 30px;
 }
@@ -100,6 +109,10 @@
 .preview-section {
     margin-top: 50px;
 }
+
+/* ==========================================================================
+   Worksheet Preview
+   ========================================================================== */
 
 .preview-card {
     margin-top: 20px;
@@ -175,6 +188,7 @@
 
 .preview-video {
     width: 100%;
+    /* aspect-ratio preserves video proportions without fixed dimensions. */
     aspect-ratio: 16 / 9;
 
     border: 0;
@@ -188,6 +202,10 @@
     flex-wrap: wrap;
 }
 
+/* ==========================================================================
+   Save Feedback
+   ========================================================================== */
+
 .save-message {
     min-height: 1.5em;
     font-weight: bold;
@@ -200,6 +218,10 @@
 .save-message.error {
     color: var(--color-danger);
 }
+
+/* ==========================================================================
+   Responsive Editor
+   ========================================================================== */
 
 @media (max-width: 1100px) {
     .editor-layout {
