@@ -9,12 +9,16 @@
     ELEMENT REFERENCES
 ==================================================*/
 
-const urlParameters = new URLSearchParams(window.location.search);
-const topicId = urlParameters.get("topic");
+const urlParameters =
+    new URLSearchParams(window.location.search);
+
+const topicId =
+    urlParameters.get("topic");
 
 let currentTopicId = topicId;
 
 const difficultySelect = document.getElementById("difficulty");
+const statusSelect = document.getElementById("status");
 const saveTopicButton = document.getElementById("save-topic");
 const saveMessage = document.getElementById("save-message");
 
@@ -37,8 +41,8 @@ const addParagraphButton = document.getElementById("add-paragraph");
 const questionContainer = document.getElementById("question-container");
 const addQuestionButton = document.getElementById("add-question");
 
-
 const previewReading = document.getElementById("preview-reading");
+
 
 
 /*==================================================
@@ -474,11 +478,14 @@ function collectTopicData() {
         title: topicTitleInput.value.trim(),
         category: categorySelect.value,
         difficulty: difficultySelect.value,
+        status: statusSelect.value,
+        favorite: false,
         image: imageUrlInput.value.trim(),
         youtube: youtubeUrlInput.value.trim(),
         information: paragraphs,
         questions,
         createdAt: new Date().toISOString()
+        
     };
 }
 
@@ -542,16 +549,17 @@ function saveTopic() {
 
         topic.updatedAt = currentTime;
 
+        topic.favorite = existingIndex.favorite || false;
+
         savedTopics[existingIndex] = topic;
     } else {
 
         topic.createdAt = currentTime;
+        topic.updatedAt = currentTime;
+        
+        savedTopics.push(topic);
 
-    topic.updatedAt = currentTime;
-
-    savedTopics.push(topic);
-
-    currentTopicId = topic.id;
+        currentTopicId = topic.id;
 }
 
 saveTopics(savedTopics);
@@ -570,12 +578,13 @@ function loadTopicIntoEditor(topic) {
     topicTitleInput.value = topic.title || "";
     categorySelect.value = topic.category || "Animals";
     difficultySelect.value = topic.difficulty || "Easy";
+    statusSelect.value = topic.status || "Draft";
     imageUrlInput.value = topic.image || "";
     youtubeUrlInput.value = topic.youtube || "";
 
     paragraphContainer.innerHTML = "";
     document.getElementById("editor-status").textContent =
-    "Editing Existing Topic";
+    `Editing: ${topic.title || "Untitled Topic"}`;
     
     // Keep one editable row available even when older data has no reading content.
     const paragraphs =
@@ -617,18 +626,26 @@ function loadTopicIntoEditor(topic) {
          * @param {Object} questionData - Stored question values.
          * @returns {void}
          */
-        questions.forEach(questionData => {
+        questions.forEach((questionData, index) => {
             const card = createQuestionCard();
+            
+            const isLegacyQuestion = typeof questionData === "string";
 
-        card.querySelector(".question-input").value = questionData.question || "";
-        card.querySelector(".answer-input").value = questionData.answer || "";
+            const questionText = isLegacyQuestion ? questionData : questionData.question || "";
+            const answerText = isLegacyQuestion ? topic.answers?.[index] || "" : questionData.answer || "";
+
+            const questionDifficulty = isLegacyQuestion ? topic.difficulty || "Easy" : questionData.difficulty || "Easy";
+            card.querySelector(".question-input").value = questionText;
+            
+            card.querySelector(".answer-input").value = answerText;
+            
+            card.querySelector(".question-difficulty").value = questionDifficulty;
+            
+            questionContainer.appendChild(card);
+        });
         
-        card.querySelector(".question-difficulty").value = questionData.difficulty || "Easy";
-        questionContainer.appendChild(card);
-    });
-
-  renumberQuestions();
-  updatePreview();
+        renumberQuestions();
+        updatePreview();
 }
 
 /*==================================================

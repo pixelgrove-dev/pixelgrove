@@ -16,7 +16,8 @@
 function filterTopics(
     topics,
     searchTerm,
-    selectedCategory
+    selectedCategory,
+    selectedStatus
 ) {
     // Normalization makes matching insensitive to capitalization and incidental spaces.
     const normalizedSearch =
@@ -44,7 +45,11 @@ function filterTopics(
             selectedCategory === "all" ||
             category === selectedCategory;
 
-        return matchesSearch && matchesCategory;
+        const topicStatus = topic.status || "Draft";
+
+        const matchesStatus = selectedStatus === "all" || topicStatus === selectedStatus;
+
+        return matchesSearch && matchesCategory && matchesStatus;
 
     });
 }

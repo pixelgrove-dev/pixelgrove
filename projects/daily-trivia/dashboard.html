@@ -15,12 +15,12 @@
 
     <link
         rel="stylesheet"
-        href="css/main.css?v=1"
+        href="css/main.css?v=3"
     >
 
     <link
         rel="stylesheet"
-        href="css/dashboard.css?v=1"
+        href="css/dashboard.css?v=3"
     >
 </head>
 
@@ -49,7 +49,7 @@
     </header>
 
     <main class="dashboard-container">
-
+        <div id="app-navigation"></div>
         <!-- Summary and navigation share one container to maintain consistent page width. -->
         <!-- Statistics derived from topics in localStorage -->
         <section class="dashboard-stats">
@@ -128,7 +128,45 @@
                     <h2>Paragraphs</h2>
                 </div>
             </article>
+            
+            <article class="stat-card">
+                <span class="stat-icon">📝</span>
+                <div>
+                    <p id="stat-drafts" class="stat-number">0</p>
+                    <h2>Drafts</h2>
+                </div>
+            </article>
+            
+            <article class="stat-card">
+                <span class="stat-icon">✅</span>
+                <div>
+                    <p id="stat-published" class="stat-number">0</p>
+                    <h2>Published</h2>
+                </div>
+            </article>
 
+            <article class="stat-card">
+                <span class="stat-icon">🕒</span>
+                <div>
+                    <p id="stat-updated" class="stat-number">0</p>
+                    <h2>Updated Today</h2>
+                </div>
+            </article>
+
+        </section>
+
+        <section class="library-breakdown">
+            <div class="section-heading">
+                <h2>📈 Library Breakdown</h2>
+
+                <p>
+                    How topics are distributed across categories.
+                </p>
+            </div>
+
+            <div id="category-breakdown">
+
+            </div>
         </section>
 
         <section class="recent-topics-section">
@@ -192,13 +230,12 @@
     </main>
 
     <!-- Storage and aggregation services load before dashboard rendering -->
-    <script src="js/services/storage.js?v=3"></script>
+     <script src="js/components/navigation.js?v=1"></script>
+    <script src="js/services/storage.js?v=4"></script>
 
-    <script
-        src="js/library/library-stats.js?v=3"
-    ></script>
+    <script src="js/library/library-stats.js?v=5"></script>
 
-    <script src="js/dashboard.js?v=3"></script>
+    <script src="js/dashboard.js?v=5"></script>
 
 </body>
 

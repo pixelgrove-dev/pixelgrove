@@ -28,27 +28,36 @@ const questionCount =
 const paragraphCount =
     document.getElementById("stat-paragraphs");
 
+const draftCount =
+    document.getElementById("stat-drafts");
+
+const publishedCount =
+    document.getElementById("stat-published");
+
+const updatedTodayCount =
+    document.getElementById("stat-updated");
 /*==================================================
     DASHBOARD RENDERING
 ==================================================*/
 
 // Assigning the prepared values in one place keeps the markup free of storage
 // concerns and makes each card's data source easy to trace.
-topicCount.textContent =
-    stats.totalTopics;
 
-favoriteCount.textContent =
-    stats.favoriteTopics;
+topicCount.textContent = stats.totalTopics;
 
-categoryCount.textContent =
-    stats.totalCategories;
+favoriteCount.textContent = stats.favoriteTopics;
 
-questionCount.textContent =
-    stats.totalQuestions;
+categoryCount.textContent = stats.totalCategories;
 
-paragraphCount.textContent =
-    stats.totalParagraphs;
+questionCount.textContent = stats.totalQuestions;
 
+paragraphCount.textContent = stats.totalParagraphs;
+
+draftCount.textContent = stats.draftTopics;
+
+publishedCount.textContent = stats.publishedTopics;
+
+updatedTodayCount.textContent = stats.updatedToday;
 
 /*==================================================
     RECENT TOPICS
@@ -110,5 +119,100 @@ function renderRecentTopics(topics = []) {
         recentTopicsContainer.appendChild(link);
 
     });
+
+}
+
+/*==================================================
+    CATEGORY BREAKDOWN
+==================================================*/
+
+const categoryBreakdownContainer =
+    document.getElementById("category-breakdown");
+
+renderCategoryBreakdown();
+
+function renderCategoryBreakdown() {
+
+    const categories =
+        getCategoryBreakdown();
+
+    categoryBreakdownContainer.innerHTML = "";
+
+    if (categories.length === 0) {
+
+        const emptyMessage =
+            document.createElement("p");
+
+        emptyMessage.textContent =
+            "No topics yet.";
+
+        categoryBreakdownContainer.appendChild(
+            emptyMessage
+        );
+
+        return;
+    }
+
+    const list =
+        document.createElement("div");
+
+    list.className =
+        "breakdown-list";
+
+    const highestCount =
+        categories[0].count;
+
+    categories.forEach(category => {
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "breakdown-row";
+
+        const label =
+            document.createElement("span");
+
+        label.className =
+            "breakdown-label";
+
+        label.textContent =
+            category.category;
+
+        const bar =
+            document.createElement("div");
+
+        bar.className =
+            "breakdown-bar";
+
+        const fill =
+            document.createElement("div");
+
+        fill.className =
+            "breakdown-fill";
+
+        fill.style.width =
+            `${(category.count / highestCount) * 100}%`;
+
+        bar.appendChild(fill);
+
+        const value =
+            document.createElement("span");
+
+        value.className =
+            "breakdown-value";
+
+        value.textContent =
+            category.count;
+
+        row.appendChild(label);
+        row.appendChild(bar);
+        row.appendChild(value);
+
+        list.appendChild(row);
+
+    });
+
+    categoryBreakdownContainer.appendChild(list);
 
 }

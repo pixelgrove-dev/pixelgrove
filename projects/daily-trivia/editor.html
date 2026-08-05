@@ -6,8 +6,8 @@
 
     <title>Topic Builder | Activity Studio</title>
 
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/editor.css"
+    <link rel="stylesheet" href="css/main.css?v=1">
+    <link rel="stylesheet" href="css/editor.css?v=3">
 </head>
 
 <body>
@@ -24,120 +24,106 @@
             
             <p id="editor-status">Creating New Topic</p>
 
-            <p class="version">Version 0.7 Developer Preview</p>
+            <p class="version">Version 0.7.2 Developer Preview</p>
         </div>
         
-        <div class="header-actions">
-            <a class="print-button" href="library.html">
-                📚 Topic Library
-            </a>
-            <a class="print-button" href="dashboard.html">
-                ← Dashboard
-            </a>
-        </div>
     </header>
 
-    <!-- Two-column editing workspace -->
-    <section class="editor-layout">
+  <div id="app-navigation"></div>  
 
-        <!-- Topic input controls -->
+<!-- Two-column editing workspace -->
+ <section class="editor-layout">
+
+    <!-- Topic input controls -->
         <div class="editor-panel">
-            <section class="editor">
-                <h2>Create a New Trivia Topic</h2>
-                <p>Fill out the information below. This will eventually generate a worksheet automatically.</p>
-                <div class="editor-card">
-                    <label>Topic Title</label>
-                    <input id="topic-title-input" type="text" placeholder="Example: Yellowstone National Park">
-                    <label>Category</label>
-                    <select id="category">
-                        <option>Animals</option>
-                        <option>Nature</option>
-                        <option>History</option>
-                        <option>Science</option>
-                        <option>Sports</option>
-                        <option>Music</option>
-                        <option>Movies</option>
-                        <option>Geography</option>
-                        <option>Food</option>
-                        <option>Holidays</option>
+        <section class="editor">
+            <h2>Create a New Trivia Topic</h2>
+            <p>Fill out the information below. This will eventually generate a worksheet automatically.</p>
+            <div class="editor-card">
+                <label for="topic-title-input">Topic Title</label>
+                <input id="topic-title-input" type="text" placeholder="Example: Yellowstone National Park">
+                <label for="category">Category</label>
+                <select id="category">
+                    <option>Animals</option>
+                    <option>Nature</option>
+                    <option>History</option>
+                    <option>Science</option>
+                    <option>Sports</option>
+                    <option>Music</option>
+                    <option>Movies</option>
+                    <option>Geography</option>
+                    <option>Food</option>
+                    <option>Holidays</option>
+                </select>
+                <label for="difficulty">Difficulty</label>
+                <select id="difficulty">
+                    <option>Easy</option>
+                    <option>Medium</option>
+                    <option>Hard</option>
+                </select>
+                <div class="form-group">
+                    <label for="status">
+                        Status
+                    </label>
+                    <select id="status">
+                        <option value="Draft">Draft</option>
+                        <option value="Published">Published</option>
                     </select>
-                    <label>Difficulty</label>
-                    <select id="difficulty">
-                        <option>Easy</option>
-                        <option>Medium</option>
-                        <option>Hard</option>
-                    </select>
-                    
-                    <hr>
-                    
-                    <h3>Reading Section</h3>
-                    <div id="paragraph-container"></div>
-                    <button id="add-paragraph" class="secondary-button">+ Add Paragraph</button>
-                    
-                    <hr>
-                    
-                    <h3>Questions</h3>
-                    <div id="question-container"></div>
-                    <button id="add-question" class="secondary-button">+ Add Question</button>
-
-                    <hr>
-
-                    <h3>Media</h3>
-                    <label for="image-url">Image URL or File Path</label>
-                    <input
-                        id="image-url"
-                        type="text"
-                        placeholder="Example: images/yellowstone.jpg"
-                        >
-                    
-                    <label for="youtube-url">YouTube Video Link</label>
-                    <input id="youtube-url"
-                        type="url"
-                        placeholder="https://www.youtube.com/watch?v=...">
-
-                    <hr>
-
-                    <div class="editor-actions">
-                        <button id="save-topic" class="primary-button" type="button">
-                            Save Topic
-                        </button>
-
-                        <p id="save-message" class="save-message" aria-live="polite"></p>
-                    </div>
                 </div>
-            </section>
-        </div>
+                    
+                <hr>
+                <h3>Reading Section</h3>
+                <div id="paragraph-container"></div>
+                <button id="add-paragraph" class="secondary-button" type="button">+ Add Paragraph</button>
+                <hr>
+                    
+                <h3>Questions</h3>
+                <div id="question-container"></div>
+                <button id="add-question" class="secondary-button" type="button">+ Add Question</button>
+                <hr>
+                <h3>Media</h3>
+                <label for="image-url">Image URL or File Path</label>
+                <input id="image-url" type="text" placeholder="Example: images/yellowstone.jpg">
+                    
+                <label for="youtube-url">YouTube Video Link</label>
+                <input id="youtube-url" type="url" placeholder="https://www.youtube.com/watch?v=...">
+
+                <hr>
+                <div class="editor-actions">
+                    <button id="save-topic" class="primary-button" type="button">Save Topic</button>
+                    <p id="save-message" class="save-message" aria-live="polite"></p>
+                </div>
+            </div>
+        </section>
+    </div>
         
-        <!-- Live worksheet preview updated by editor.js -->
-        <div class="preview-panel">
-            <section class="preview-section">
-                <h2>Live Worksheet Preview</h2>
+<!-- Live worksheet preview updated by editor.js -->
+ <div class="preview-panel">
+     <section class="preview-section">
+        <h2>Live Worksheet Preview</h2>
 
-                <div class="preview-card">
-                    <p class="label">Trivia Worksheet</p>
+        <div class="preview-card">
+            <p class="label">Trivia Worksheet</p>
 
-                    <h1 id="preview-title">Your Topic Title</h1>
+            <h1 id="preview-title">Your Topic Title</h1>
 
-                    <p id="preview-category">Category</p>
+            <p id="preview-category">Category</p>
+            <hr>
 
-                    <hr>
-
-                    <h3>Read-Aloud Information</h3>
-                    <div id="preview-reading"></div>
-                    <br>
-                    <div id="preview-media" class="preview-media"></div>
-                    <h3>Comprehension Questions</h3>
-                    <ol id="preview-questions"></ol>
-
-                    <h3 class="preview-answer-heading">Answer Key</h3>
-                    <ol id="preview-answers"></ol>
-                </div>
-            </section>
+            <h3>Read-Aloud Information</h3>
+            <div id="preview-reading"></div>
+            <div id="preview-media" class="preview-media"></div>
+            <ol id="preview-questions"></ol>
+            <h3 class="preview-answer-heading">Answer Key</h3>
+            <ol id="preview-answers"></ol>
         </div>
     </section>
 </div>
+</section>
+</div>
 <!-- Storage must load before editor logic reads or saves topics -->
+<script src="js/components/navigation.js?v=1"></script>
 <script src="js/services/storage.js?v=1"></script>
-<script src="js/editor.js?v=1"></script>
+<script src="js/editor.js?v=3"></script>
 </body>
 </html>

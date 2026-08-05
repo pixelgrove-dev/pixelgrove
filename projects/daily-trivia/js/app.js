@@ -21,9 +21,53 @@ const information = document.getElementById("information");
 const questionList = document.getElementById("question-list");
 const answerList = document.getElementById("answer-list");
 
+const includeAnswersCheckbox = document.getElementById("include-answers");
+
+const answersSection = document.getElementById("worksheet-answers");
+
+
 /*==================================================
     FUNCTIONS
 ==================================================*/
+
+/*==================================================
+    TOPIC DATA
+==================================================*/
+
+let topics = [];
+
+/**
+ * Loads user-created topics from localStorage and merges in any
+ * legacy topics from data.js that have not already been imported.
+ *
+ * @returns {void}
+ */
+function loadTopics() {
+    const savedTopics = getTopics();
+
+    const legacyTopics =
+        typeof triviaTopics !== "undefined" &&
+        Array.isArray(triviaTopics)
+            ? triviaTopics
+            : [];
+
+    const savedTopicIds = new Set(
+        savedTopics.map(topic => String(topic.id))
+    );
+
+    const missingLegacyTopics = legacyTopics.filter(topic => {
+        return !savedTopicIds.has(String(topic.id));
+    });
+
+    topics = [
+        ...savedTopics,
+        ...missingLegacyTopics
+    ];
+
+    if (missingLegacyTopics.length > 0) {
+        saveTopics(topics);
+    }
+}
 
 /**
  * Populates the topic selector from the available trivia data.
@@ -31,110 +75,247 @@ const answerList = document.getElementById("answer-list");
  * @returns {void}
  */
 function fillTopicSelector() {
-  /**
-   * Adds one selectable option for a trivia topic.
-   *
-   * @param {Object} topic - Topic represented by the option.
-   * @returns {void}
-   */
-  triviaTopics.forEach(topic => {
-    const option = document.createElement("option");
+    topicSelect.innerHTML = "";
 
-    option.value = topic.id;
-    option.textContent = topic.title;
+    topics.forEach(topic => {
+        const option = document.createElement("option");
 
-    topicSelect.appendChild(option);
-  });
+        option.value = String(topic.id);
+        option.textContent =
+            topic.title || "Untitled Topic";
+
+        topicSelect.appendChild(option);
+    });
 }
 
 /**
- * Replaces the worksheet contents with data from the selected topic.
+ * Displays one topic in the printable worksheet.
  *
- * @param {Object} topic - Trivia topic to display.
+ * Supports both legacy data.js topics and topics created in the editor.
+ *
+ * @param {Object} topic - Topic to display.
  * @returns {void}
  */
 function renderWorksheet(topic) {
-  topicTitle.textContent = topic.title;
-  topicDate.textContent = topic.date;
+    if (!topic) {
+        console.warn("No worksheet topic was provided.");
+        return;
+    }
 
-  mediaContent.innerHTML = "";
-  
-  if (topic.image) {
-    const img = document.createElement("img");
-    img.src = topic.image;
-    img.alt = topic.title;
-    img.className = "topic-image";
+    /* --------------------------------------------------
+       Title and date
+    -------------------------------------------------- */
 
-    mediaContent.appendChild(img);
-}
+    topicTitle.textContent =
+        topic.title || "Untitled Topic";
+
+    const topicDateValue =
+        topic.date ||
+        topic.updatedAt ||
+        topic.createdAt ||
+        "";
+
+    if (topicDateValue) {
+        const parsedDate = new Date(topicDateValue);
+
+        topicDate.textContent = Number.isNaN(parsedDate.getTime())
+            ? String(topicDateValue).replace(/^Date:\s*/i, "")
+            : parsedDate.toLocaleDateString(
+                undefined,
+                {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                }
+            );
+    } else {
+        topicDate.textContent = "";
+    }
+
+    /* --------------------------------------------------
+       Media
+    -------------------------------------------------- */
+
+    mediaContent.innerHTML = "";
+
+    if (topic.image) {
+        const image = document.createElement("img");
+
+        image.src = topic.image;
+        image.alt = topic.title
+            ? `Image for ${topic.title}`
+            : "Worksheet topic image";
+
+        image.className = "topic-image";
+
+        mediaContent.appendChild(image);
+    }
 
     if (topic.youtube) {
         const videoLink = document.createElement("a");
+
         videoLink.href = topic.youtube;
         videoLink.textContent = "Watch Short Video";
         videoLink.target = "_blank";
+        videoLink.rel = "noopener noreferrer";
         videoLink.className = "video-link";
 
         mediaContent.appendChild(videoLink);
-}
+    }
 
     if (!topic.image && !topic.youtube) {
-        mediaContent.textContent = "No picture or video added for this topic yet.";
-}
+        const placeholder = document.createElement("div");
 
-  information.innerHTML = "";
-  questionList.innerHTML = "";
-  answerList.innerHTML = "";
+        placeholder.className = "media-placeholder";
+        placeholder.textContent =
+            "No picture or video has been added for this topic.";
 
-  // Empty entries act as formatting markers, allowing source data to separate
-  // paragraph groups without rendering blank DOM elements.
-  let addParagraphBreak = false;
-
-  /**
-   * Renders a reading paragraph or records a break for the next paragraph.
-   *
-   * @param {string} text - Reading entry from the topic.
-   * @returns {void}
-   */
-  topic.information.forEach(text => {
-    if (text.trim() === "") {
-      addParagraphBreak = true;
-      return;
-    }
-    const p = document.createElement("p");
-    p.textContent = text;
-    
-    if (addParagraphBreak) {
-      p.classList.add("paragraph-break");
-      addParagraphBreak = false;
+        mediaContent.appendChild(placeholder);
     }
 
-    information.appendChild(p);
-});
+    /* --------------------------------------------------
+       Clear previous worksheet content
+    -------------------------------------------------- */
 
-  /**
-   * Adds a question to the printable worksheet.
-   *
-   * @param {string} question - Question text to display.
-   * @returns {void}
-   */
-  topic.questions.forEach(question => {
-    const li = document.createElement("li");
-    li.textContent = question;
-    questionList.appendChild(li);
-  });
+    information.innerHTML = "";
+    questionList.innerHTML = "";
+    answerList.innerHTML = "";
 
-  /**
-   * Adds an answer to the worksheet's answer key.
-   *
-   * @param {string} answer - Answer text to display.
-   * @returns {void}
-   */
-  topic.answers.forEach(answer => {
-    const li = document.createElement("li");
-    li.textContent = answer;
-    answerList.appendChild(li);
-  });
+    /* --------------------------------------------------
+       Reading paragraphs
+    -------------------------------------------------- */
+
+    const paragraphs = Array.isArray(topic.information)
+        ? topic.information
+        : [];
+
+    let addParagraphBreak = false;
+
+    paragraphs.forEach(entry => {
+        const text =
+            typeof entry === "string"
+                ? entry
+                : entry?.text || "";
+
+        if (text.trim() === "") {
+            addParagraphBreak = true;
+            return;
+        }
+
+        const paragraph = document.createElement("p");
+
+        paragraph.textContent = text;
+
+        if (addParagraphBreak) {
+            paragraph.classList.add("paragraph-break");
+            addParagraphBreak = false;
+        }
+
+        information.appendChild(paragraph);
+    });
+
+    if (paragraphs.length === 0) {
+        const emptyMessage = document.createElement("p");
+
+        emptyMessage.textContent =
+            "No reading information has been added.";
+
+        information.appendChild(emptyMessage);
+    }
+
+    /* --------------------------------------------------
+       Questions and answers
+    -------------------------------------------------- */
+
+    const questions = Array.isArray(topic.questions)
+        ? topic.questions
+        : [];
+
+    questions.forEach(questionItem => {
+        const questionText =
+            typeof questionItem === "string"
+                ? questionItem
+                : questionItem?.question ||
+                  questionItem?.text ||
+                  "";
+
+        if (!questionText.trim()) {
+            return;
+        }
+
+        const listItem = document.createElement("li");
+
+        listItem.textContent = questionText;
+
+        questionList.appendChild(listItem);
+    });
+
+    const legacyAnswers = Array.isArray(topic.answers)
+        ? topic.answers
+        : [];
+
+    const embeddedAnswers = questions
+        .map(questionItem => {
+            if (
+                typeof questionItem === "object" &&
+                questionItem !== null
+            ) {
+                return questionItem.answer || "";
+            }
+
+            return "";
+        })
+        .filter(answer => answer.trim() !== "");
+
+    const answers =
+        legacyAnswers.length > 0
+            ? legacyAnswers
+            : embeddedAnswers;
+
+    answers.forEach(answerItem => {
+        const answerText =
+            typeof answerItem === "string"
+                ? answerItem
+                : answerItem?.answer ||
+                  answerItem?.text ||
+                  "";
+
+        if (!answerText.trim()) {
+            return;
+        }
+
+        const listItem = document.createElement("li");
+
+        listItem.textContent = answerText;
+
+        answerList.appendChild(listItem);
+    });
+
+    if (questionList.children.length === 0) {
+        const listItem = document.createElement("li");
+
+        listItem.textContent =
+            "No comprehension questions have been added.";
+
+        questionList.appendChild(listItem);
+    }
+
+    if (answerList.children.length === 0) {
+        const listItem = document.createElement("li");
+
+        listItem.textContent =
+            "No answers have been added.";
+
+        answerList.appendChild(listItem);
+    }
+
+    /* --------------------------------------------------
+       Keep selector synchronized
+    -------------------------------------------------- */
+
+    if (topicSelect && topic.id !== undefined) {
+        topicSelect.value = String(topic.id);
+    }
 }
 
 /**
@@ -143,13 +324,9 @@ function renderWorksheet(topic) {
  * @returns {Object|undefined} Selected topic, or `undefined` when no ID matches.
  */
 function getSelectedTopic() {
-  /**
-   * Matches selector values to topic identifiers without type coercion.
-   *
-   * @param {Object} topic - Topic being considered.
-   * @returns {boolean} Whether the topic is currently selected.
-   */
-  return triviaTopics.find(topic => topic.id === topicSelect.value);
+    return topics.find(topic => {
+        return String(topic.id) === topicSelect.value;
+    });
 }
 
 /**
@@ -168,7 +345,7 @@ function buildTopicLibrary() {
      * @param {Object} topic - Topic represented by the card.
      * @returns {void}
      */
-    triviaTopics.forEach(topic => {
+    topics.forEach(topic => {
 
         const card = document.createElement("div");
 
@@ -207,12 +384,17 @@ function buildTopicLibrary() {
 /*==================================================
     APPLICATION STARTUP
 ==================================================*/
+loadTopics();
 
 fillTopicSelector();
 
 buildTopicLibrary();
 
-renderWorksheet(triviaTopics[0]);
+if (topics.length > 0) {
+  renderWorksheet(topics[0]);
+} else {
+  console.warn("No worksheet topics are available.");
+}
 
 /**
  * Loads the selector's current topic into the worksheet.
@@ -221,14 +403,73 @@ renderWorksheet(triviaTopics[0]);
  */
 loadTopicButton.addEventListener("click", () => {
   const selectedTopic = getSelectedTopic();
+
+  if (!selectedTopic) {
+    console.warn("The selected topic could not be found.");
+    return;
+  }
+  
   renderWorksheet(selectedTopic);
 });
 
 /**
- * Opens the browser print workflow for the rendered worksheet.
+ * Applies the selected print settings.
+ *
+ * @returns {void}
+ */
+function applyPrintOptions() {
+  const includeAnswersCheckbox =
+    document.getElementById("include-answers");
+
+  const answersSection =
+    document.getElementById("worksheet-answers");
+
+  if (!includeAnswersCheckbox || !answersSection) {
+    console.warn("Print option elements could not be found.");
+    return;
+  }
+
+  answersSection.classList.toggle(
+    "exclude-from-print",
+    !includeAnswersCheckbox.checked
+  );
+}
+
+/**
+ * Applies the print settings and opens the browser print dialog.
  *
  * @returns {void}
  */
 printButton.addEventListener("click", () => {
+  applyPrintOptions();
   window.print();
 });
+
+/**
+ * Rechecks the print settings immediately before printing.
+ *
+ * This also covers printing with Ctrl + P.
+ *
+ * @returns {void}
+ */
+window.addEventListener("beforeprint", () => {
+  applyPrintOptions();
+});
+
+/**
+ * Restores the answer key after the print dialog closes.
+ *
+ * @returns {void}
+ */
+window.addEventListener("afterprint", () => {
+  const answersSection =
+    document.getElementById("worksheet-answers");
+
+  if (answersSection) {
+    answersSection.classList.remove(
+      "exclude-from-print"
+    );
+  }
+});
+
+

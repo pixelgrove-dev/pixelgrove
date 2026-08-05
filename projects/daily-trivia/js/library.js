@@ -13,6 +13,8 @@ const categoryFilter = document.getElementById("category-filter");
 
 const sortFilter = document.getElementById("sort-filter");
 
+const statusFilter = document.getElementById("status-filter");
+
 // Populate controls before the first render so the initial view follows the
 // same filtering path as every later user interaction.
 populateCategoryFilter();
@@ -66,13 +68,19 @@ function renderTopics(topicsToDisplay = getTopics()) {
             </p>
 
             <div class="topic-actions">
+            
+                <span class="topic-status ${topic.status === "Published" ? "published" : "draft"}">${topic.status || "Draft"}</span>
 
                 <button class="favorite-topic" type="button" aria-label="Toggle favorite">
                     ${topic.favorite ? "⭐" : "☆"}
                 </button>
 
-                <button class="open-topic" type="button">
-                    Open
+                <button class="view-topic" type="button">
+                    View
+                </button>
+                
+                <button class="edit-topic" type="button">
+                    Edit
                 </button>
 
                 <button class="duplicate-topic" type="button">
@@ -85,7 +93,8 @@ function renderTopics(topicsToDisplay = getTopics()) {
             </div>
         `;
 
-        const openButton = card.querySelector(".open-topic");
+        const viewButton = card.querySelector(".view-topic");
+        const editButton = card.querySelector(".edit-topic");
         const duplicateButton = card.querySelector(".duplicate-topic");
         const deleteButton = card.querySelector(".delete-topic");
         const favoriteButton = card.querySelector(".favorite-topic");
@@ -124,7 +133,7 @@ function renderTopics(topicsToDisplay = getTopics()) {
         applyFilters();
     });
 
-        openButton.addEventListener("click",
+        viewButton.addEventListener("click",
         /**
          * Opens the selected topic in the editor.
          *
@@ -135,6 +144,10 @@ function renderTopics(topicsToDisplay = getTopics()) {
         // Encoding keeps generated URLs valid even when an ID contains reserved characters.
         window.location.href =
             `editor.html?topic=${encodeURIComponent(topic.id)}`;
+        });
+
+        editButton.addEventListener("click", () => {
+            window.location.href = `editor.html?topic=${encodeURIComponent(topic.id)}`;
         });
 
         duplicateButton.addEventListener("click",
@@ -217,7 +230,8 @@ function applyFilters() {
     const filteredTopics = filterTopics(
         topics,
         searchInput.value,
-        categoryFilter.value
+        categoryFilter.value,
+        statusFilter.value
     );
 
     const sortedTopics = sortTopics(
@@ -278,6 +292,11 @@ categoryFilter.addEventListener(
 );
 
 sortFilter.addEventListener(
+    "change",
+    applyFilters
+)
+
+statusFilter.addEventListener(
     "change",
     applyFilters
 )

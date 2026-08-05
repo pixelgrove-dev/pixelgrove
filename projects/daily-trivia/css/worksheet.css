@@ -1,4 +1,27 @@
 /* ==========================================================================
+   Worksheet Workspace Layout
+   ========================================================================== */
+
+.workspace {
+    width: min(1100px, calc(100% - 32px));
+    margin-inline: auto;
+}
+
+.workspace > .app-header,
+.workspace > #app-navigation,
+.workspace > .topic-library {
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.workspace .app-navigation {
+    width: 100%;
+    margin: 20px 0 28px;
+}
+
+/* ==========================================================================
    Worksheet Surface and Header
    ========================================================================== */
 
@@ -116,7 +139,7 @@
     gap: 12px;
     flex-wrap: wrap;
 
-    max-width: 850px;
+    width: min(850px, 100%);
     margin: 0 auto 20px;
     padding: 18px;
 
@@ -144,3 +167,104 @@
 #information p.paragraph-break {
     padding-top: 2rem;
 }
+
+/* ==========================================================================
+   Worksheet Topic Library
+   ========================================================================== */
+
+.topic-library {
+    width: 100%;
+
+    margin: 24px 0;
+    padding: 24px;
+
+    background: white;
+
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-large);
+}
+
+.library-header {
+    margin-bottom: 20px;
+}
+
+.library-header h2 {
+    margin: 0 0 8px;
+
+    color: var(--color-primary);
+}
+
+.library-header p {
+    margin: 0;
+}
+
+.library-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 16px;
+}
+
+.topic-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    min-height: 190px;
+    padding: 18px;
+
+    background: var(--color-background);
+
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-medium);
+}
+
+.topic-card .open-topic {
+    align-self: flex-start;
+    margin-top: auto;
+}
+
+.topic-info h3 {
+    margin: 0 0 8px;
+
+    color: var(--color-text);
+}
+
+.topic-info p {
+    margin: 0;
+}
+
+.worksheet-actions {
+    width: min(1100px, calc(100% - 32px));
+
+    margin: 24px auto;
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.print-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    font-weight: 600;
+}
+
+.print-option input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+
+    accent-color: var(--color-primary);
+}
+
+.worksheet-actions .primary-button,
+.worksheet-actions .secondary-button {
+    min-height: 48px;
+    margin-top: 0;
+}
+

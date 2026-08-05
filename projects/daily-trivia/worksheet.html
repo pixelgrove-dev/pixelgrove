@@ -6,9 +6,9 @@
 
   <title>Daily Trivia</title>
 
-  <link rel="stylesheet" href="css/main.css" /> 
-  <link rel="stylesheet" href="css/worksheet.css" />
-  <link rel="stylesheet" href="css/print.css" />
+  <link rel="stylesheet" href="css/main.css?v=4" /> 
+  <link rel="stylesheet" href="css/worksheet.css?v=4" />
+  <link rel="stylesheet" href="css/print.css?v=5" />
 
 </head>
 <body>
@@ -20,15 +20,14 @@
         <p class="app-label">Resident Activity Tool</p>
         <h1>Activity Studio</h1>
       </div>
-      
-      <button id="back-button" class="back-button" onclick="history.back()">Back</button>
-      <button id="print-worksheet" class="print-button">Print Worksheet</button>
     </header>
+
+    <div id="app-navigation" class="no-print"></div>
 
     <section class="topic-selector no-print">
       <label for="topic-select">Choose Topic:</label>
       <select id="topic-select"></select>
-      <button id="load-topic">Load Topic</button>
+      <button id="load-topic" type="button">Load Topic</button>
     </section>
 
     <!-- Quick-access topic library -->
@@ -44,9 +43,18 @@
     </section>
 
   </div>
+
+  <div class="worksheet-actions">
+
+    <button id="print-worksheet" type="button" class="primary-button">Print / Save PDF</button>
+    <label class="print-option" for="include-answers">
+      <input id="include-answers" type="checkbox" checked>Include answer key
+    </label>
+
+  </div>
     
   <!-- Printable worksheet content populated by app.js -->
-  <main class="worksheet">
+  <main id="printable-worksheet" class="worksheet">
     
     <header class="worksheet-header">
       <p class="label">Trivia Worksheet</p>
@@ -76,15 +84,17 @@
       <ol id="question-list"></ol>
     </section>
 
-    <section class="answer-key">
+    <section id="worksheet-answers" class="answer-key">
       <h2>Answer Key</h2>
 
       <ol id="answer-list"></ol>
     </section>
   </main>
 <!-- Topic data must load before the worksheet rendering logic -->
-<script src="js/data.js"></script>
-<script src="js/app.js"></script>
+  <script src="js/components/navigation.js?v=1"></script>
+  <script src="js/services/storage.js?v=1"></script>
+  <script src="js/data.js?v=2"></script>
+  <script src="js/app.js?v=9"></script>
 </div>
 </body>
 </html>

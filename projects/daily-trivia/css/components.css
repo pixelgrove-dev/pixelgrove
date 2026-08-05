@@ -11,6 +11,12 @@
     font-weight: bold;
     cursor: pointer;
     transition: var(--transition-fast);
+
+    text-decoration: none;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .print-button {
@@ -47,7 +53,6 @@
 
 .secondary-button {
     width: fit-content;
-    margin-top: 20px;
     padding: 12px 18px;
 
     background: white;
@@ -160,4 +165,73 @@
 
 .favorite-topic:hover {
     transform: scale(1.2);
+}
+
+/* ==========================================================================
+   Application Navigation
+   ========================================================================== */
+
+#app-navigation {
+    width: 100%;
+}
+
+.app-navigation {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    width: 100%;
+    margin: 20px 0 28px;
+}
+
+.app-navigation a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 16px;
+
+    color: var(--color-primary);
+    background: white;
+
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-pill);
+
+    font-weight: bold;
+    text-decoration: none;
+
+    transition: var(--transition-fast);
+}
+
+.app-navigation a:hover,
+.app-navigation a[aria-current="page"] {
+    color: white;
+    background: var(--color-primary);
+}
+
+.app-navigation a:focus-visible {
+    outline: 3px solid var(--color-primary-light);
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+
+    .app-navigation {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .app-navigation a {
+        width: 100%;
+    }
+
+}
+
+button:disabled,
+.primary-button:disabled,
+.secondary-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
 }
