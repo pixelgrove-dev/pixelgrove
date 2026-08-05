@@ -1,6 +1,7 @@
 /**
- * Calculates dashboard statistics from the topics stored in localStorage.
+ * Calculates dashboard statistics from a supplied topic collection.
  *
+ * @param {Object[]} topics Topics loaded by the dashboard.
  * @returns {{
  *   totalTopics: number,
  *   favoriteTopics: number,
@@ -12,25 +13,14 @@
  *   updatedToday: number
  * }}
  */
-function getLibraryStats() {
-
-    const topics = getTopics();
+function getLibraryStats(topics = []) {
 
     if (!Array.isArray(topics)) {
-        return {
-            totalTopics: 0,
-            favoriteTopics: 0,
-            totalCategories: 0,
-            totalQuestions: 0,
-            totalParagraphs: 0,
-            draftTopics: 0,
-            publishedTopics: 0,
-            updatedToday: 0
-        };
+        topics = [];
     }
 
-    const totalQuestions = topics.reduce(
-        (total, topic) => {
+    const totalQuestions =
+        topics.reduce((total, topic) => {
 
             const questions =
                 Array.isArray(topic.questions)
@@ -39,12 +29,10 @@ function getLibraryStats() {
 
             return total + questions.length;
 
-        },
-        0
-    );
+        }, 0);
 
-    const totalParagraphs = topics.reduce(
-        (total, topic) => {
+    const totalParagraphs =
+        topics.reduce((total, topic) => {
 
             const information =
                 Array.isArray(topic.information)
@@ -53,72 +41,94 @@ function getLibraryStats() {
 
             return total + information.length;
 
-        },
-        0
-    );
+        }, 0);
 
-    const categories = topics
-        .map(topic => topic.category)
-        .filter(Boolean);
+    const categories =
+        topics
+            .map(topic => topic.category)
+            .filter(Boolean);
 
-    const favoriteTopics = topics.filter(
-        topic => Boolean(topic.favorite)
-    ).length;
+    const favoriteTopics =
+        topics.filter(topic =>
+            Boolean(topic.favorite)
+        ).length;
 
-    const draftTopics = topics.filter(
-        topic => (topic.status || "Draft") === "Draft"
-    ).length;
+    const draftTopics =
+        topics.filter(topic =>
+            (topic.status || "Draft") === "Draft"
+        ).length;
 
-    const publishedTopics = topics.filter(
-        topic => topic.status === "Published"
-    ).length;
+    const publishedTopics =
+        topics.filter(topic =>
+            topic.status === "Published"
+        ).length;
 
-    const today = new Date();
+    const today =
+        new Date();
 
     today.setHours(0, 0, 0, 0);
 
-    const updatedToday = topics.filter(topic => {
+    const updatedToday =
+        topics.filter(topic => {
 
-        if (!topic.updatedAt) {
-            return false;
-        }
+            const dateValue =
+                topic.updatedAt ||
+                topic.createdAt;
 
-        const updatedDate =
-            new Date(topic.updatedAt);
+            if (!dateValue) {
+                return false;
+            }
 
-        if (Number.isNaN(updatedDate.getTime())) {
-            return false;
-        }
+            const topicDate =
+                new Date(dateValue);
 
-        updatedDate.setHours(0, 0, 0, 0);
+            if (
+                Number.isNaN(
+                    topicDate.getTime()
+                )
+            ) {
+                return false;
+            }
 
-        return updatedDate.getTime() === today.getTime();
+            topicDate.setHours(
+                0,
+                0,
+                0,
+                0
+            );
 
-    }).length;
+            return (
+                topicDate.getTime() ===
+                today.getTime()
+            );
+
+        }).length;
 
     return {
         totalTopics: topics.length,
         favoriteTopics,
-        totalCategories: new Set(categories).size,
+        totalCategories:
+            new Set(categories).size,
         totalQuestions,
         totalParagraphs,
         draftTopics,
         publishedTopics,
         updatedToday
     };
-
 }
 
 
 /**
- * Returns the most recently created or edited topics.
+ * Returns topics ordered from newest to oldest.
  *
- * @param {number} [limit=5] Maximum number of topics to return.
- * @returns {Object[]} Topics ordered from newest to oldest.
+ * @param {Object[]} topics Topic collection.
+ * @param {number} [limit=5] Maximum topics to return.
+ * @returns {Object[]}
  */
-function getRecentTopics(limit = 5) {
-
-    const topics = getTopics();
+function getRecentTopics(
+    topics = [],
+    limit = 5
+) {
 
     if (!Array.isArray(topics)) {
         return [];
@@ -128,28 +138,36 @@ function getRecentTopics(limit = 5) {
         .slice()
         .sort((a, b) => {
 
-            const dateA = new Date(
-                a.updatedAt ||
-                a.createdAt ||
-                0
-            );
+            const dateA =
+                new Date(
+                    a.updatedAt ||
+                    a.createdAt ||
+                    0
+                );
 
-            const dateB = new Date(
-                b.updatedAt ||
-                b.createdAt ||
-                0
-            );
+            const dateB =
+                new Date(
+                    b.updatedAt ||
+                    b.createdAt ||
+                    0
+                );
 
             return dateB - dateA;
 
         })
         .slice(0, limit);
-
 }
 
-function getCategoryBreakdown() {
 
-    const topics = getTopics();
+/**
+ * Counts topics in each category.
+ *
+ * @param {Object[]} topics Topic collection.
+ * @returns {{category: string, count: number}[]}
+ */
+function getCategoryBreakdown(
+    topics = []
+) {
 
     if (!Array.isArray(topics)) {
         return [];
@@ -160,7 +178,8 @@ function getCategoryBreakdown() {
     topics.forEach(topic => {
 
         const category =
-            topic.category || "Uncategorized";
+            topic.category ||
+            "Uncategorized";
 
         counts[category] =
             (counts[category] || 0) + 1;
@@ -168,15 +187,11 @@ function getCategoryBreakdown() {
     });
 
     return Object.entries(counts)
-
-        .map(([category,count]) => ({
-
+        .map(([category, count]) => ({
             category,
-
             count
-
         }))
-
-        .sort((a,b)=>b.count-a.count);
-
+        .sort((a, b) =>
+            b.count - a.count
+        );
 }

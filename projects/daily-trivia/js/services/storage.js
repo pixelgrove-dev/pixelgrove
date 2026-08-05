@@ -1,56 +1,100 @@
 /**
- * Defines the browser-storage boundary for user-created trivia topics.
+ * Central storage service.
  *
- * Centralizing serialization here prevents interface code from depending on
- * localStorage's string-only data format.
+ * Every page in Grove Activity Studio should communicate with storage
+ * through this file only.
  */
 
-const STORAGE_KEY = "groveTopics";
+const STORAGE_MODE = "cloud";
+// Future options:
+// "local"
+// "cloud"
+// "hybrid"
+
 
 /**
- * Retrieves all persisted trivia topics.
+ * Retrieves all topics from the active storage provider.
  *
- * @returns {Array<Object>} Stored topics, or an empty array when none exist.
+ * @returns {Promise<Object[]>}
  */
-function getTopics() {
+async function getTopics() {
 
-    // New users have no stored value, so callers receive an iterable collection by default.
-    return JSON.parse(
-        localStorage.getItem(STORAGE_KEY)
-    ) || [];
+    switch (STORAGE_MODE) {
+
+        case "cloud":
+            return await getCloudTopics();
+
+        case "local":
+        default:
+            return getLocalTopics();
+
+    }
 
 }
 
-/**
- * Replaces the persisted trivia topic collection.
- *
- * @param {Array<Object>} topics - Complete topic collection to persist.
- * @returns {void}
- */
-function saveTopics(topics) {
 
-    // Local storage accepts strings only, so the collection crosses the boundary as JSON.
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(topics)
-    );
+/**
+ * Retrieves one topic by its identifier.
+ *
+ * @param {string} id Topic identifier.
+ * @returns {Promise<Object|null|undefined>}
+ */
+async function getTopicById(id) {
+
+    switch (STORAGE_MODE) {
+
+        case "cloud":
+            return await getCloudTopicById(id);
+
+        case "local":
+        default:
+            return getLocalTopicById(id);
+
+    }
 
 }
 
-/**
- * Finds a persisted topic by its unique identifier.
- *
- * @param {string} id - Identifier of the topic to retrieve.
- * @returns {Object|undefined} Matching topic, or `undefined` when it is not found.
- */
-function getTopicById(id) {
-    const topics = getTopics();
 
-    /**
-     * Uses exact ID equality to avoid treating distinct identifiers as interchangeable.
-     *
-     * @param {Object} topic - Stored topic being inspected.
-     * @returns {boolean} Whether the topic has the requested identifier.
-     */
-    return topics.find(topic => topic.id === id);
+/**
+ * Creates or updates one topic using the active storage provider.
+ *
+ * @param {Object} topic Topic to persist.
+ * @returns {Promise<Object>}
+ */
+async function saveTopicToStorage(topic) {
+
+    switch (STORAGE_MODE) {
+
+        case "cloud":
+            return await saveCloudTopic(topic);
+
+        case "local":
+        default:
+            return saveLocalTopic(topic);
+
+    }
+
+}
+
+
+/**
+ * Deletes one topic using the active storage provider.
+ *
+ * @param {string} id Topic identifier.
+ * @returns {Promise<void>}
+ */
+async function deleteTopicFromStorage(id) {
+
+    switch (STORAGE_MODE) {
+
+        case "cloud":
+            await deleteCloudTopic(id);
+            return;
+
+        case "local":
+        default:
+            deleteLocalTopic(id);
+
+    }
+
 }

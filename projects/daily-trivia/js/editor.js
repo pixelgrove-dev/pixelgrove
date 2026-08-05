@@ -43,7 +43,41 @@ const addQuestionButton = document.getElementById("add-question");
 
 const previewReading = document.getElementById("preview-reading");
 
+let autosaveTimer = null;
+const AUTOSAVE_DELAY = 1500;
 
+function scheduleAutoSave() {
+    
+    clearTimeout(autosaveTimer);
+
+    if (!currentTopicId) {
+        return;
+    }
+
+    saveMessage.textContent = "Unsaved changes...";
+
+    saveMessage.className = "save-message";
+
+    autosaveTimer = setTimeout(() => {
+        const topic = collectTopicData();
+
+        const validationMessage = validateTopic(topic);
+
+        if (validationMessage){
+            return;
+        }
+
+        saveTopic({
+            isAutosave: true
+        });
+    }, AUTOSAVE_DELAY);
+
+}
+
+function handleEditorChange() {
+    updatePreview();
+    scheduleAutoSave();
+}
 
 /*==================================================
     PARAGRAPH CREATION
@@ -64,7 +98,7 @@ function createParagraph(placeholder = "Enter another paragraph...") {
     const textarea = document.createElement("textarea");
     textarea.className = "reading-paragraph";
     textarea.placeholder = placeholder;
-    textarea.addEventListener("input", updatePreview);
+    textarea.addEventListener("input", handleEditorChange);
 
     const removeButton = document.createElement("button");
     removeButton.type = "button"
@@ -79,6 +113,7 @@ function createParagraph(placeholder = "Enter another paragraph...") {
     removeButton.addEventListener("click", () => {
         wrapper.remove();
         updatePreview();
+        handleEditorChange();
     });
 
     wrapper.appendChild(textarea);
@@ -136,9 +171,9 @@ function createQuestionCard() {
     const difficultySelect = wrapper.querySelector(".question-difficulty");
     const removeButton = wrapper.querySelector(".remove-button");
 
-    questionInput.addEventListener("input", updatePreview);
-    answerInput.addEventListener("input", updatePreview);
-    difficultySelect.addEventListener("change", updatePreview);
+    questionInput.addEventListener("input", handleEditorChange);
+    answerInput.addEventListener("input", handleEditorChange);
+    difficultySelect.addEventListener("change", handleEditorChange);
 
     /**
      * Removes this card and restores sequential numbering for the remaining cards.
@@ -149,6 +184,7 @@ function createQuestionCard() {
         wrapper.remove();
         renumberQuestions();
         updatePreview();
+        scheduleAutoSave();
     });
 
     return wrapper;
@@ -217,33 +253,56 @@ function getYouTubeEmbedUrl(url) {
     return "";
 }
 
-// A topic query parameter switches the editor from creation mode to edit mode.
-if (topicId) {
-  const savedTopic = getTopicById(topicId);
+/**
+ * Loads an existing topic or prepares a blank editor.
+ *
+ * @returns {Promise<void>}
+ */
+async function initializeEditor() {
 
-  if (savedTopic) {
-    loadTopicIntoEditor(savedTopic);
-  } else {
-    paragraphContainer.appendChild(
-      createParagraph("Enter the first paragraph...")
-    );
+    await requireAuthenticatedUser();
 
-    questionContainer.appendChild(
-      createQuestionCard()
-    );
+    if (topicId) {
 
-    updatePreview();
-  }
-} else {
-  paragraphContainer.appendChild(
-    createParagraph("Enter the first paragraph...")
-  );
+        const savedTopic =
+            await getTopicById(topicId);
 
-  questionContainer.appendChild(
-    createQuestionCard()
-  );
+        if (savedTopic) {
 
-  updatePreview();
+            loadTopicIntoEditor(savedTopic);
+
+        } else {
+
+            paragraphContainer.appendChild(
+                createParagraph(
+                    "Enter the first paragraph..."
+                )
+            );
+
+            questionContainer.appendChild(
+                createQuestionCard()
+            );
+
+            updatePreview();
+
+        }
+
+    } else {
+
+        paragraphContainer.appendChild(
+            createParagraph(
+                "Enter the first paragraph..."
+            )
+        );
+
+        questionContainer.appendChild(
+            createQuestionCard()
+        );
+
+        updatePreview();
+
+    }
+
 }
 
 /**
@@ -516,7 +575,12 @@ function validateTopic(topic) {
  *
  * @returns {void}
  */
-function saveTopic() {
+async function saveTopic({ isAutosave = false } = {}) {
+
+    if (!isAutosave) {
+        clearTimeout(autosaveTimer);
+    }
+
     const topic = collectTopicData();
 
     const validationMessage = validateTopic(topic);
@@ -525,47 +589,35 @@ function saveTopic() {
         saveMessage.textContent = validationMessage;
         saveMessage.className = "save-message error";
         return;
+
     }
 
-    const savedTopics = getTopics();
+    try {
 
-    /**
-     * Locates an existing record so edits do not create duplicate topics.
-     *
-     * @param {Object} saved - Previously persisted topic.
-     * @returns {boolean} Whether the stored topic has the current topic's ID.
-     */
-    const existingIndex = savedTopics.findIndex(saved =>
-        saved.id === topic.id
-    );
+        const savedTopic =
+            await saveTopicToStorage(topic);
 
-    const currentTime = new Date().toISOString();
-    // Preserve the original creation timestamp when editing.
+        currentTopicId =
+            savedTopic.id;
 
-    if (existingIndex >= 0) {
+        saveMessage.textContent =
+            isAutosave
+                ? "Saved automatically."
+                : `"${savedTopic.title}" was saved successfully.`;
 
-        const existingTopic = savedTopics[existingIndex];
-        topic.createdAt = existingTopic.createdAt || currentTime;
+        saveMessage.className =
+            "save-message success";
+        } catch (error) {
+            console.error(error);
 
-        topic.updatedAt = currentTime;
+            saveMessage.textContent =
+                "The topic could not be saved.";
 
-        topic.favorite = existingIndex.favorite || false;
+            saveMessage.className =
+                "save-message error";
 
-        savedTopics[existingIndex] = topic;
-    } else {
-
-        topic.createdAt = currentTime;
-        topic.updatedAt = currentTime;
-        
-        savedTopics.push(topic);
-
-        currentTopicId = topic.id;
 }
 
-saveTopics(savedTopics);
-
-saveMessage.textContent = `"${topic.title}" was saved successfully.`;
-saveMessage.className = "save-message success";
 }
 
 /**
@@ -664,14 +716,16 @@ addParagraphButton.addEventListener("click", () => {
         createParagraph()
     );
 
+    updatePreview();
+    scheduleAutoSave();
+
 });
 
 
-topicTitleInput.addEventListener("input", updatePreview);
+topicTitleInput.addEventListener("input", handleEditorChange);
 
-categorySelect.addEventListener("change", updatePreview);
+categorySelect.addEventListener("change", handleEditorChange);
 
-updatePreview();
 
 /**
  * Adds a question card and refreshes the preview to keep both views synchronized.
@@ -684,7 +738,12 @@ addQuestionButton.addEventListener("click", () => {
     );
 
     updatePreview();
+    scheduleAutoSave();
 });
 
-imageUrlInput.addEventListener("input", updatePreview);
-youtubeUrlInput.addEventListener("input", updatePreview);
+imageUrlInput.addEventListener("input", handleEditorChange);
+youtubeUrlInput.addEventListener("input", handleEditorChange);
+
+statusSelect.addEventListener("change", handleEditorChange);
+
+initializeEditor();

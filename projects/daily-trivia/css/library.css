@@ -255,3 +255,47 @@
     }
 
 }
+
+/* ==========================================================================
+   Library Import and Export
+   ========================================================================== */
+
+.library-transfer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    margin: 0 0 2rem;
+    padding: 1.5rem;
+
+    background: white;
+
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-large);
+}
+
+.library-transfer h2 {
+    margin: 0 0 0.35rem;
+}
+
+.library-transfer p {
+    margin: 0;
+}
+
+.library-transfer-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.import-label {
+    margin: 0;
+}
+
+#transfer-message {
+    flex-basis: 100%;
+    margin: 0;
+}

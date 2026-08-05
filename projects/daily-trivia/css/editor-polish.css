@@ -1,0 +1,126 @@
+/* ==========================================================================
+   Editor Sync Status
+   ========================================================================== */
+
+.editor-sync-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.8rem 1.2rem;
+
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-large);
+}
+
+.editor-sync-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.editor-sync-dot {
+    width: 0.75rem;
+    height: 0.75rem;
+
+    border-radius: 50%;
+    background: #718096;
+}
+
+.editor-sync-dot.synced {
+    background: #2f855a;
+}
+
+.editor-sync-dot.saving,
+.editor-sync-dot.loading {
+    background: #d69e2e;
+}
+
+.editor-sync-dot.unsaved {
+    background: #dd6b20;
+}
+
+.editor-sync-dot.offline,
+.editor-sync-dot.error {
+    background: #c53030;
+}
+
+#editor-last-saved {
+    color: var(--color-text-muted, #5c6b62);
+    font-size: 0.95rem;
+}
+
+.editor-history-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.editor-history-button {
+    margin: 0;
+    padding: 0.55rem 0.9rem;
+}
+
+/* ==========================================================================
+   Recovery Dialog
+   ========================================================================== */
+
+.draft-recovery-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: grid;
+    place-items: center;
+
+    padding: 1rem;
+    background: rgba(15, 24, 18, 0.7);
+}
+
+.draft-recovery-card {
+    width: min(520px, 100%);
+    padding: 2rem;
+
+    background: white;
+    color: #17231c;
+
+    border-radius: 24px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+}
+
+.draft-recovery-card h2 {
+    margin-top: 0.4rem;
+}
+
+.draft-recovery-topic {
+    padding: 0.8rem 1rem;
+
+    background: #edf5ee;
+    border-radius: 12px;
+
+    font-weight: 700;
+}
+
+.draft-recovery-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 620px) {
+    .editor-history-actions {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .editor-history-button {
+        flex: 1;
+    }
+}

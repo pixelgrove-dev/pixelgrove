@@ -247,3 +247,14 @@
         position: static;
     }
 }
+
+.account-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+#current-user-email {
+    font-weight: 600;
+}

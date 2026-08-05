@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Sign In | Activity Studio</title>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body>
+
+    <main class="auth-page">
+
+        <section class="auth-card">
+
+            <p class="app-label">
+                Pixel Grove
+            </p>
+
+            <h1>🌳 Activity Studio</h1>
+
+            <p>
+                Sign in to access your activity library.
+            </p>
+
+            <form id="auth-form">
+
+                <label for="auth-email">
+                    Email
+                </label>
+
+                <input
+                    id="auth-email"
+                    type="email"
+                    autocomplete="email"
+                    required
+                >
+
+                <label for="auth-password">
+                    Password
+                </label>
+
+                <input
+                    id="auth-password"
+                    type="password"
+                    autocomplete="current-password"
+                    minlength="8"
+                    required
+                >
+
+                <div class="auth-actions">
+
+                    <button
+                        id="sign-in"
+                        class="primary-button"
+                        type="submit"
+                    >
+                        Sign In
+                    </button>
+
+                    <button
+                        id="sign-up"
+                        class="secondary-button"
+                        type="button"
+                    >
+                        Create Account
+                    </button>
+
+                </div>
+
+            </form>
+
+            <p
+                id="auth-message"
+                class="save-message"
+                aria-live="polite"
+            ></p>
+
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/services/supabase-client.js?v=1"></script>
+    <script src="js/auth.js?v=1"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Hangman | Pixel Grove</title>
+
+    <link
+        rel="stylesheet"
+        href="../../css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/hangman.css?v=3"
+    >
+</head>
+
+<body>
+
+    <main class="hangman-page">
+
+        <header class="game-header">
+            <p class="game-eyebrow">
+                Pixel Grove Games
+            </p>
+
+            <h1>🌿 Hangman</h1>
+
+            <p>
+                Guess the hidden word before the drawing is complete.
+            </p>
+        </header>
+
+        <section class="game-card">
+
+            <div class="hangman-drawing" aria-hidden="true">
+
+                <div class="gallows">
+                    <div class="gallows-post"></div>
+                    <div class="gallows-top"></div>
+                    <div class="gallows-rope"></div>
+
+                    <div id="head" class="body-part head"></div>
+                    <div id="body" class="body-part body"></div>
+                    <div id="left-arm" class="body-part left-arm"></div>
+                    <div id="right-arm" class="body-part right-arm"></div>
+                    <div id="left-leg" class="body-part left-leg"></div>
+                    <div id="right-leg" class="body-part right-leg"></div>
+                </div>
+
+            </div>
+
+            <div class="game-content">
+
+                <p
+                    id="word-display"
+                    class="word-display"
+                    aria-label="Hidden word"
+                >
+                </p>
+
+                <p class="game-status">
+                    Incorrect guesses:
+                    <span id="wrong-count">0</span>
+                    / 6
+                </p>
+
+                <div
+                    id="keyboard"
+                    class="keyboard"
+                    aria-label="Letter choices"
+                >
+                </div>
+
+                <p
+                    id="game-message"
+                    class="game-message"
+                    aria-live="polite"
+                >
+                </p>
+
+                <button
+                    id="restart-game"
+                    class="primary-button"
+                    type="button"
+                >
+                    New Game
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="js/hangman.js"></script>
+
+</body>
+</html>

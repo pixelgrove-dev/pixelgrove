@@ -12,7 +12,7 @@
     <title>Topic Library</title>
 
     <link rel="stylesheet" href="css/main.css?v=2" />
-    <link rel="stylesheet" href="css/library.css?v=2" />
+    <link rel="stylesheet" href="css/library.css?v=3" />
 
 </head>
 
@@ -28,6 +28,30 @@
         </div>
 
         <div id="app-navigation"></div>
+
+        <section class="library-transfer">
+            <div>
+                <h2>Libary Backup</h2>
+                <p>
+                    Export your topics for backup or import them on another device.
+                </p>
+            </div>
+
+            <div class="Library-transfer-actions">
+                <button id="export-library" class="secondary-button" type="button">
+                    Export Library
+                </button>
+
+                <label for="import-library" class="secondary-button import-label">
+                    Import Library
+                </label>
+
+                <input id="import-library" type="file" accept=".json,application/json" hidden>
+
+            </div>
+
+            <p id="transfer-message" class="save-message" aria-live="polite"></p>
+        </section>
 
         <!-- Search, category, and sort controls -->
         <div class="library-tools">
@@ -76,11 +100,20 @@
     </div>
 
     <!-- Dependencies load before the library controller that consumes them -->
-     <script src="js/components/navigation.js?v=1"></script>
-     <script src="js/services/storage.js?v=3"></script>
-     <script src="js/utils/topic-utils.js?v=1"></script>
-     <script src="js/library/library-filters.js?v=5"></script>
-     <script src="js/library.js?v=7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/services/supabase-client.js?v=1"></script>
+    <script src="js/auth-guard.js?v=1"></script>
+
+    <script src="js/services/local-storage.js?v=1"></script>
+    <script src="js/services/cloud-storage.js?v=1"></script>
+    <script src="js/services/storage.js?v=2"></script>
+
+    <script src="js/components/navigation.js?v=1"></script>
+    <script src="js/utils/topic-utils.js?v=1"></script>
+    <script src="js/library/library-filters.js?v=5"></script>
+    <script src="js/library.js?v=8"></script>
+    <!-- <script src="js/library/library-transfer.js?v=1"></script> -->
 
 </body>
 

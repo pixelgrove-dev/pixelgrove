@@ -1,16 +1,9 @@
 /**
- * Renders persisted library totals into the dashboard summary cards.
- *
- * Aggregation remains in the statistics service so this file only coordinates
- * data with its corresponding interface elements.
+ * Loads the signed-in user's cloud topics and renders dashboard analytics.
  */
 
-// Dashboard data flows from localStorage through the statistics service, keeping
-// this presentation layer responsible only for displaying the computed totals.
-const stats = getLibraryStats();
-
 /*==================================================
-    STATISTIC ELEMENTS
+    ELEMENT REFERENCES
 ==================================================*/
 
 const topicCount =
@@ -36,58 +29,187 @@ const publishedCount =
 
 const updatedTodayCount =
     document.getElementById("stat-updated");
+
+const recentTopicsContainer =
+    document.getElementById("recent-topics");
+
+const categoryBreakdownContainer =
+    document.getElementById(
+        "category-breakdown"
+    );
+
+const userEmail =
+    document.getElementById(
+        "current-user-email"
+    );
+
+const signOutButton =
+    document.getElementById("sign-out");
+
+
 /*==================================================
-    DASHBOARD RENDERING
+    INITIALIZATION
 ==================================================*/
 
-// Assigning the prepared values in one place keeps the markup free of storage
-// concerns and makes each card's data source easy to trace.
+async function initializeDashboard() {
 
-topicCount.textContent = stats.totalTopics;
+    const user =
+        await requireAuthenticatedUser();
 
-favoriteCount.textContent = stats.favoriteTopics;
+    if (!user) {
+        return;
+    }
 
-categoryCount.textContent = stats.totalCategories;
+    initializeAccountControls(user);
 
-questionCount.textContent = stats.totalQuestions;
+    showDashboardLoading();
 
-paragraphCount.textContent = stats.totalParagraphs;
+    try {
 
-draftCount.textContent = stats.draftTopics;
+        const topics =
+            await getTopics();
 
-publishedCount.textContent = stats.publishedTopics;
+        renderStatistics(topics);
+        renderRecentTopics(
+            getRecentTopics(
+                topics,
+                5
+            )
+        );
 
-updatedTodayCount.textContent = stats.updatedToday;
+        renderCategoryBreakdown(
+            getCategoryBreakdown(
+                topics
+            )
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Dashboard loading failed:",
+            error
+        );
+
+        showDashboardError();
+
+    }
+
+}
+
+
+/*==================================================
+    ACCOUNT CONTROLS
+==================================================*/
+
+function initializeAccountControls(user) {
+
+    if (!userEmail || !signOutButton) {
+
+        console.error(
+            "Dashboard account controls could not be found."
+        );
+
+        return;
+    }
+
+    userEmail.textContent =
+        user.email ||
+        "Signed-in user";
+
+    signOutButton.addEventListener(
+        "click",
+        async () => {
+
+            signOutButton.disabled = true;
+
+            signOutButton.textContent =
+                "Signing out...";
+
+            const { error } =
+                await supabaseClient
+                    .auth
+                    .signOut();
+
+            if (error) {
+
+                console.error(
+                    "Sign-out failed:",
+                    error
+                );
+
+                signOutButton.disabled = false;
+
+                signOutButton.textContent =
+                    "Sign Out";
+
+                return;
+            }
+
+            window.location.replace(
+                "login.html"
+            );
+
+        }
+    );
+
+}
+
+
+/*==================================================
+    STATISTICS
+==================================================*/
+
+function renderStatistics(topics) {
+
+    const stats =
+        getLibraryStats(topics);
+
+    topicCount.textContent =
+        stats.totalTopics;
+
+    favoriteCount.textContent =
+        stats.favoriteTopics;
+
+    categoryCount.textContent =
+        stats.totalCategories;
+
+    questionCount.textContent =
+        stats.totalQuestions;
+
+    paragraphCount.textContent =
+        stats.totalParagraphs;
+
+    draftCount.textContent =
+        stats.draftTopics;
+
+    publishedCount.textContent =
+        stats.publishedTopics;
+
+    updatedTodayCount.textContent =
+        stats.updatedToday;
+
+}
+
 
 /*==================================================
     RECENT TOPICS
 ==================================================*/
 
-const recentTopicsContainer =
-    document.getElementById("recent-topics");
-
-const recentTopics =
-    getRecentTopics(5);
-
-renderRecentTopics(recentTopics);
-
-/*==================================================
-    RECENT TOPICS RENDERING
-==================================================*/
-
 function renderRecentTopics(topics = []) {
 
-     recentTopicsContainer.innerHTML = "";
+    recentTopicsContainer.innerHTML = "";
 
     if (topics.length === 0) {
 
         recentTopicsContainer.innerHTML = `
             <div class="recent-topics-empty">
+
                 <p>No topics yet.</p>
 
                 <a href="editor.html">
                     Create your first topic
                 </a>
+
             </div>
         `;
 
@@ -103,40 +225,63 @@ function renderRecentTopics(topics = []) {
             "recent-topic-card";
 
         link.href =
-            `editor.html?topic=${encodeURIComponent(topic.id)}`;
+            `editor.html?topic=${
+                encodeURIComponent(topic.id)
+            }`;
 
-        link.innerHTML = `
-            <span class="recent-topic-icon">
-                ${topic.favorite ? "⭐" : "📄"}
-            </span>
+        const icon =
+            document.createElement("span");
 
-            <div>
-                <h3>${topic.title}</h3>
-                <p>${topic.category}</p>
-            </div>
-        `;
+        icon.className =
+            "recent-topic-icon";
 
-        recentTopicsContainer.appendChild(link);
+        icon.textContent =
+            topic.favorite
+                ? "⭐"
+                : "📄";
+
+        const content =
+            document.createElement("div");
+
+        const heading =
+            document.createElement("h3");
+
+        heading.textContent =
+            topic.title ||
+            "Untitled Topic";
+
+        const category =
+            document.createElement("p");
+
+        category.textContent =
+            topic.category ||
+            "Uncategorized";
+
+        content.appendChild(heading);
+        content.appendChild(category);
+
+        link.appendChild(icon);
+        link.appendChild(content);
+
+        recentTopicsContainer.appendChild(
+            link
+        );
 
     });
 
 }
 
+
 /*==================================================
     CATEGORY BREAKDOWN
 ==================================================*/
 
-const categoryBreakdownContainer =
-    document.getElementById("category-breakdown");
+function renderCategoryBreakdown(
+    categories = []
+) {
 
-renderCategoryBreakdown();
-
-function renderCategoryBreakdown() {
-
-    const categories =
-        getCategoryBreakdown();
-
-    categoryBreakdownContainer.innerHTML = "";
+    categoryBreakdownContainer.innerHTML =
+        "";
 
     if (categories.length === 0) {
 
@@ -146,9 +291,8 @@ function renderCategoryBreakdown() {
         emptyMessage.textContent =
             "No topics yet.";
 
-        categoryBreakdownContainer.appendChild(
-            emptyMessage
-        );
+        categoryBreakdownContainer
+            .appendChild(emptyMessage);
 
         return;
     }
@@ -192,7 +336,12 @@ function renderCategoryBreakdown() {
             "breakdown-fill";
 
         fill.style.width =
-            `${(category.count / highestCount) * 100}%`;
+            `${
+                (
+                    category.count /
+                    highestCount
+                ) * 100
+            }%`;
 
         bar.appendChild(fill);
 
@@ -203,7 +352,7 @@ function renderCategoryBreakdown() {
             "breakdown-value";
 
         value.textContent =
-            category.count;
+            String(category.count);
 
         row.appendChild(label);
         row.appendChild(bar);
@@ -213,6 +362,50 @@ function renderCategoryBreakdown() {
 
     });
 
-    categoryBreakdownContainer.appendChild(list);
+    categoryBreakdownContainer.appendChild(
+        list
+    );
 
 }
+
+
+/*==================================================
+    FEEDBACK STATES
+==================================================*/
+
+function showDashboardLoading() {
+
+    recentTopicsContainer.innerHTML = `
+        <div class="recent-topics-empty">
+            <p>Loading cloud topics...</p>
+        </div>
+    `;
+
+    categoryBreakdownContainer.innerHTML =
+        "<p>Loading breakdown...</p>";
+
+}
+
+
+function showDashboardError() {
+
+    recentTopicsContainer.innerHTML = `
+        <div class="recent-topics-empty">
+            <p>
+                The dashboard could not load
+                your cloud topics.
+            </p>
+        </div>
+    `;
+
+    categoryBreakdownContainer.innerHTML =
+        "<p>Breakdown unavailable.</p>";
+
+}
+
+
+/*==================================================
+    START APPLICATION
+==================================================*/
+
+initializeDashboard();

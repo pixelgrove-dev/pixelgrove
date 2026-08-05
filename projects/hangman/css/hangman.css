@@ -1,0 +1,330 @@
+.game-card {
+    color: #17231c;
+}
+
+.game-card h1,
+.game-card h2,
+.game-card h3,
+.game-card p {
+    color: #17231c;
+}
+
+.word-display,
+.game-status,
+.game-message {
+    color: #17231c;
+}
+
+.hangman-page {
+    width: min(1000px, calc(100% - 2rem));
+    margin: 0 auto;
+    padding: 3rem 0;
+}
+
+.game-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.game-eyebrow {
+    margin: 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.game-card {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.8fr) 1.2fr;
+    gap: 2rem;
+
+    padding: 2rem;
+
+    background: white;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-card);
+}
+
+.hangman-drawing {
+    display: grid;
+    place-items: center;
+
+    min-height: 360px;
+}
+
+.gallows {
+    position: relative;
+
+    width: 220px;
+    height: 300px;
+}
+
+.gallows-post {
+    position: absolute;
+    left: 35px;
+    bottom: 20px;
+
+    width: 8px;
+    height: 250px;
+
+    background: var(--color-primary);
+}
+
+.gallows-top {
+    position: absolute;
+    left: 35px;
+    top: 22px;
+
+    width: 130px;
+    height: 8px;
+
+    background: var(--color-primary);
+}
+
+.gallows-rope {
+    position: absolute;
+    left: 157px;
+    top: 30px;
+
+    width: 4px;
+    height: 45px;
+
+    background: var(--color-primary);
+}
+
+.body-part {
+    display: none;
+    position: absolute;
+
+    background: var(--color-text);
+}
+
+.body-part.visible {
+    display: block;
+}
+
+.head {
+    left: 133px;
+    top: 72px;
+
+    width: 48px;
+    height: 48px;
+
+    background: transparent;
+
+    border: 5px solid #17231c;
+    border-radius: 50%;
+
+    box-sizing: border-box;
+}
+
+.body {
+    left: 155px;
+    top: 120px;
+
+    width: 5px;
+    height: 78px;
+}
+
+.left-arm,
+.right-arm,
+.left-leg,
+.right-leg {
+    width: 5px;
+    height: 62px;
+
+    transform-origin: top center;
+}
+
+.left-arm {
+    left: 154px;
+    top: 133px;
+    transform: rotate(45deg);
+}
+
+.right-arm {
+    left: 157px;
+    top: 133px;
+    transform: rotate(-45deg);
+}
+
+.left-leg {
+    left: 154px;
+    top: 195px;
+    transform: rotate(35deg);
+}
+
+.right-leg {
+    left: 157px;
+    top: 195px;
+    transform: rotate(-35deg);
+}
+
+.game-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.word-display {
+    min-height: 3rem;
+    margin: 0;
+
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: 0.35rem;
+    text-align: center;
+}
+
+.game-status {
+    margin: 0;
+    font-weight: 700;
+}
+
+.keyboard {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(42px, 1fr));
+    gap: 0.6rem;
+
+    width: 100%;
+}
+
+.letter-button {
+    min-height: 44px;
+
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-small);
+
+    background: white;
+    color: var(--color-primary);
+
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.letter-button:hover:not(:disabled) {
+    background: var(--color-primary);
+    color: white;
+}
+
+.letter-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.letter-button.correct {
+    background: var(--color-primary);
+    color: white;
+}
+
+.letter-button.incorrect {
+    border-color: var(--color-danger);
+    background: var(--color-danger);
+    color: white;
+}
+
+.game-message {
+    min-height: 1.5rem;
+    margin: 0;
+
+    font-weight: 800;
+    text-align: center;
+}
+
+@media (max-width: 760px) {
+
+    .game-card {
+        grid-template-columns: 1fr;
+    }
+
+    .hangman-drawing {
+        min-height: 300px;
+    }
+
+    .keyboard {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+}
+
+.letter-button {
+    color: #2f633d;
+    background: #ffffff;
+
+    border: 2px solid #2f633d;
+}
+
+.letter-button:hover:not(:disabled) {
+    color: #ffffff;
+    background: #2f633d;
+}
+
+.letter-button.correct {
+    color: #ffffff;
+    background: #2f633d;
+}
+
+.letter-button.incorrect {
+    color: #ffffff;
+    background: #b83b3b;
+    border-color: #b83b3b;
+}
+
+.gallows-post,
+.gallows-top,
+.gallows-rope {
+    background: #2f633d;
+}
+
+.body,
+.left-arm,
+.right-arm,
+.left-leg,
+.right-leg {
+    background: #17231c;
+}
+
+.head {
+    background: transparent;
+    border-color: #17231c;
+}
+
+#restart-game {
+    padding: 12px 22px;
+
+    color: #ffffff;
+    background: #2f633d;
+
+    border: 2px solid #2f633d;
+    border-radius: 999px;
+
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+#restart-game:hover {
+    background: #438052;
+    border-color: #438052;
+}
+
+.game-card {
+    color: #17231c;
+    background: #fdfefd;
+
+    border: 2px solid #b9cfbd;
+    border-radius: 24px;
+
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+.gallows .head {
+    background: transparent;
+    border: 5px solid #17231c;
+    border-radius: 50%;
+    box-sizing: border-box;
+}
