@@ -52,7 +52,7 @@ async function initializeLibrary() {
     try {
 
         libraryTopics =
-            await getTopics();
+            await TopicService.getAll();
 
         populateCategoryFilter();
         applyFilters();
@@ -315,16 +315,11 @@ async function toggleFavorite(topic, button) {
 
     button.disabled = true;
 
-    const updatedTopic = {
-        ...topic,
-        favorite: !topic.favorite
-    };
-
     try {
 
         const savedTopic =
-            await saveTopicToStorage(
-                updatedTopic
+            await TopicService.toggleFavorite(
+                topic
             );
 
         replaceTopicInState(savedTopic);
@@ -357,33 +352,11 @@ async function duplicateTopic(topic, button) {
     button.disabled = true;
     button.textContent = "Duplicating...";
 
-    const currentTime =
-        new Date().toISOString();
-
-    const duplicatedTopic = {
-        ...topic,
-
-        id:
-            crypto.randomUUID(),
-
-        title:
-            `${topic.title} Copy`,
-
-        favorite:
-            false,
-
-        createdAt:
-            currentTime,
-
-        updatedAt:
-            currentTime
-    };
-
     try {
 
         const savedTopic =
-            await saveTopicToStorage(
-                duplicatedTopic
+            await TopicService.duplicate(
+                topic
             );
 
         libraryTopics.push(savedTopic);
@@ -429,9 +402,7 @@ async function removeTopic(topic, button) {
 
     try {
 
-        await deleteTopicFromStorage(
-            topic.id
-        );
+        await TopicService.delete(topic.id);
 
         libraryTopics =
             libraryTopics.filter(savedTopic =>

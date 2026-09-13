@@ -118,8 +118,7 @@
         );
 
         try {
-            const savedTopic =
-                await saveTopicToStorage(topic);
+            const savedTopic = await TopicService.save(topic);
 
             state.currentTopicId =
                 savedTopic.id;
@@ -269,8 +268,7 @@
                 "Syncing recovery copy"
             );
 
-            const savedTopic =
-                await saveTopicToStorage(draft);
+            const savedTopic = await TopicService.save(draft);
 
             state.currentTopic =
                 savedTopic;

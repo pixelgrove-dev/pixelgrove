@@ -23,7 +23,7 @@ async function exportLibrary() {
             "save-message";
 
         const topics =
-            await getTopics();
+            await TopicService.getAll();
 
         const exportData = {
             app: "Activity Studio",
@@ -247,7 +247,7 @@ async function importLibrary(file) {
         }
 
         const savedTopics =
-            await getTopics();
+            await TopicService.getAll();
 
         const savedIds =
             new Set(
@@ -272,7 +272,7 @@ async function importLibrary(file) {
 
         for (const topic of newTopics) {
 
-            await saveTopicToStorage(
+            await TopicService.save(
                 topic
             );
 
@@ -289,7 +289,7 @@ async function importLibrary(file) {
             "undefined"
         ) {
             libraryTopics =
-                await getTopics();
+                await TopicService.getAll();
         }
 
         if (

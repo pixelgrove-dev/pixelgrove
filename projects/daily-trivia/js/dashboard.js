@@ -67,7 +67,7 @@ async function initializeDashboard() {
     try {
 
         const topics =
-            await getTopics();
+            await TopicService.getAll();
 
         renderStatistics(topics);
         renderRecentTopics(

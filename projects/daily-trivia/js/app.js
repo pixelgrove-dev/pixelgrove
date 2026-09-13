@@ -1,8 +1,7 @@
 /**
- * Coordinates the legacy topic catalog with the interactive worksheet view.
+ * Coordinates cloud-backed topics with the interactive worksheet view.
  *
- * Topic data must load before this script because the page intentionally keeps
- * static content separate from rendering behavior.
+ * Authentication and topic services load before this controller.
  */
 
 /*==================================================
@@ -25,6 +24,9 @@ const includeAnswersCheckbox = document.getElementById("include-answers");
 
 const answersSection = document.getElementById("worksheet-answers");
 
+const userEmail = document.getElementById("current-user-email");
+const signOutButton = document.getElementById("sign-out");
+
 
 /*==================================================
     FUNCTIONS
@@ -36,38 +38,6 @@ const answersSection = document.getElementById("worksheet-answers");
 
 let topics = [];
 
-/**
- * Loads user-created topics from localStorage and merges in any
- * legacy topics from data.js that have not already been imported.
- *
- * @returns {void}
- */
-function loadTopics() {
-    const savedTopics = getTopics();
-
-    const legacyTopics =
-        typeof triviaTopics !== "undefined" &&
-        Array.isArray(triviaTopics)
-            ? triviaTopics
-            : [];
-
-    const savedTopicIds = new Set(
-        savedTopics.map(topic => String(topic.id))
-    );
-
-    const missingLegacyTopics = legacyTopics.filter(topic => {
-        return !savedTopicIds.has(String(topic.id));
-    });
-
-    topics = [
-        ...savedTopics,
-        ...missingLegacyTopics
-    ];
-
-    if (missingLegacyTopics.length > 0) {
-        saveTopics(topics);
-    }
-}
 
 /**
  * Populates the topic selector from the available trivia data.
@@ -194,17 +164,29 @@ function renderWorksheet(topic) {
     paragraphs.forEach(entry => {
         const text =
             typeof entry === "string"
-                ? entry
-                : entry?.text || "";
+            ? entry
+            : entry?.text || "";
 
-        if (text.trim() === "") {
-            addParagraphBreak = true;
-            return;
+        const trimmedText =
+            text.trim();
+
+        const isLegacySeparator =
+            trimmedText === "-" ||
+            trimmedText === "--";
+
+        if (
+            !trimmedText ||
+            isLegacySeparator
+        ){
+                addParagraphBreak = true;
+                return;
         }
 
-        const paragraph = document.createElement("p");
+        const paragraph =
+            document.createElement("p");
 
-        paragraph.textContent = text;
+        paragraph.textContent =
+            trimmedText;
 
         if (addParagraphBreak) {
             paragraph.classList.add("paragraph-break");
@@ -381,36 +363,123 @@ function buildTopicLibrary() {
 
 }
 
-/*==================================================
-    APPLICATION STARTUP
-==================================================*/
-loadTopics();
+/**
+ * Displays the signed-in account and wires sign-out.
+ *
+ * @param {Object} user Authenticated Supabase user.
+ * @returns {void}
+ */
+function initializeAccountControls(user) {
+    if (!userEmail || !signOutButton) {
+        return;
+    }
 
-fillTopicSelector();
+    userEmail.textContent =
+        user.email || "Signed-in user";
 
-buildTopicLibrary();
+    signOutButton.addEventListener(
+        "click",
+        async () => {
+            signOutButton.disabled = true;
+            signOutButton.textContent = "Signing out...";
 
-if (topics.length > 0) {
-  renderWorksheet(topics[0]);
-} else {
-  console.warn("No worksheet topics are available.");
+            const { error } =
+                await supabaseClient.auth.signOut();
+
+            if (error) {
+                console.error("Sign-out failed:", error);
+                signOutButton.disabled = false;
+                signOutButton.textContent = "Sign Out";
+                return;
+            }
+
+            window.location.replace("login.html");
+        }
+    );
 }
 
 /**
- * Loads the selector's current topic into the worksheet.
+ * Loads the signed-in user's cloud topics and prepares
+ * the worksheet interface.
  *
- * @returns {void}
+ * @returns {Promise<void>}
  */
-loadTopicButton.addEventListener("click", () => {
-  const selectedTopic = getSelectedTopic();
+async function initializeWorksheet() {
+    const user =
+        await requireAuthenticatedUser();
 
-  if (!selectedTopic) {
-    console.warn("The selected topic could not be found.");
-    return;
-  }
+    if (!user) {
+        return;
+    }
+
+    initializeAccountControls(user);
+
+    try {
+        topics = await TopicService.getAll();
+        
+        fillTopicSelector();
+
+        buildTopicLibrary();
+
+        if (topics.length === 0) {
+
+            console.warn(
+                "No worksheet topics are available."
+            );
+
+            return;
+        }
+
+        const urlParameters =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        const requestedTopicId =
+            urlParameters.get("topic");
+
+        const requestedTopic =
+            requestedTopicId
+                ? topics.find(topic =>
+                    String(topic.id) ===
+                    requestedTopicId
+                )
+                : null;
+
+        renderWorksheet(
+            requestedTopic ||
+            topics[0]
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Worksheet topics could not be loaded:",
+            error
+        );
+
+    }
+
+}
   
-  renderWorksheet(selectedTopic);
-});
+
+/*==================================================
+    EVENTS
+==================================================*/
+
+loadTopicButton.addEventListener(
+    "click",
+    () => {
+        const selectedTopic = getSelectedTopic();
+
+        if (!selectedTopic) {
+            console.warn("The selected topic could not be found.");
+            return;
+        }
+
+        renderWorksheet(selectedTopic);
+    }
+);
 
 /**
  * Applies the selected print settings.
@@ -472,4 +541,5 @@ window.addEventListener("afterprint", () => {
   }
 });
 
+initializeWorksheet();
 

@@ -162,10 +162,7 @@
 
         try {
             if (state.currentTopicId) {
-                const savedTopic =
-                    await getTopicById(
-                        state.currentTopicId
-                    );
+                const savedTopic = await TopicService.getById(state.currentTopicId);
 
                 if (savedTopic) {
                     EditorApp.loadTopicIntoEditor(

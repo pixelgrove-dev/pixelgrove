@@ -258,3 +258,16 @@
 #current-user-email {
     font-weight: 600;
 }
+
+/* ==========================================================================
+   Live Preview Reading Spacing
+   ========================================================================== */
+
+#preview-reading p {
+    margin: 0 0 1.25rem;
+    line-height: 1.65;
+}
+
+#preview-reading p:last-child {
+    margin-bottom: 0;
+}
