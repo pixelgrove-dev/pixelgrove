@@ -1,158 +1,361 @@
-const exportLibraryButton = document.getElementById("export-library");
+const exportLibraryButton =
+    document.getElementById("export-library");
 
-const importLibraryInput = document.getElementById("import-library");
+const importLibraryInput =
+    document.getElementById("import-library");
 
-const transferMessage = document.getElementById("transfer-message");
+const transferMessage =
+    document.getElementById("transfer-message");
 
 
-function exportLibrary() {
-    const topics = getTopics();
+/*==================================================
+    EXPORT
+==================================================*/
 
-    const exportData = {
-        app: "Activity Studio",
-        version: 1,
-        exportedAt: new Date().toISOString(),
-        topics
-    };
+async function exportLibrary() {
 
-    const json = JSON.stringify(exportData, null, 2);
+    try {
 
-    const blob = new Blob([json],{
-        type: "application/json"
-    });
+        transferMessage.textContent =
+            "Preparing export...";
 
-    const downloadUrl = URL.createObjectURL(blob);
+        transferMessage.className =
+            "save-message";
 
-    const link = document.createElement("a");
+        const topics =
+            await getTopics();
 
-    const date = new Date().toISOString().slice(0, 10);
+        const exportData = {
+            app: "Activity Studio",
+            version: 1,
+            exportedAt:
+                new Date().toISOString(),
+            topics
+        };
 
-    link.href = downloadUrl;
+        const json =
+            JSON.stringify(
+                exportData,
+                null,
+                2
+            );
 
-    link.download = `studio-library-${date}.json`;
+        const blob =
+            new Blob(
+                [json],
+                {
+                    type: "application/json"
+                }
+            );
 
-    document.body.appendChild(link);
+        const downloadUrl =
+            URL.createObjectURL(blob);
 
-    link.click();
+        const link =
+            document.createElement("a");
 
-    link.remove();
+        const date =
+            new Date()
+                .toISOString()
+                .slice(0, 10);
 
-    URL.revokeObjectURL(downloadUrl);
+        link.href =
+            downloadUrl;
 
-    transferMessage.textContent = `${topics.length} topic(s) exported successfully.`;
+        link.download =
+            `studio-library-${date}.json`;
 
-    transferMessage.className =  "save-message success";
+        document.body.appendChild(link);
+
+        link.click();
+
+        link.remove();
+
+        URL.revokeObjectURL(
+            downloadUrl
+        );
+
+        transferMessage.textContent =
+            `${topics.length} topic(s) exported successfully.`;
+
+        transferMessage.className =
+            "save-message success";
+
+    } catch (error) {
+
+        console.error(
+            "Library export failed:",
+            error
+        );
+
+        transferMessage.textContent =
+            error instanceof Error
+                ? error.message
+                : "The library could not be exported.";
+
+        transferMessage.className =
+            "save-message error";
+
+    }
+
 }
 
+
+/*==================================================
+    IMPORT HELPERS
+==================================================*/
+
 function getImportedTopics(data) {
+
     if (Array.isArray(data)) {
         return data;
     }
 
-    if ( data && Array.isArray(data.topics)) {
+    if (
+        data &&
+        Array.isArray(data.topics)
+    ) {
         return data.topics;
     }
 
     return null;
 }
 
-function normalizedImportedTopic(topic) {
-    if (!topic || typeof topic !== "object") {
+
+function normalizeImportedTopic(topic) {
+
+    if (
+        !topic ||
+        typeof topic !== "object"
+    ) {
         return null;
     }
 
-    const title = typeof topic.title === "string" ? topic.title.trim() : "";
+    const title =
+        typeof topic.title === "string"
+            ? topic.title.trim()
+            : "";
 
-    if(!title) {
+    if (!title) {
         return null;
     }
+
+    const now =
+        new Date().toISOString();
 
     return {
         ...topic,
 
-        id: topic.id || crypto.randomUUID(),
+        id:
+            topic.id ||
+            crypto.randomUUID(),
 
         title,
 
-        category: topic.category || "Uncategorized",
+        category:
+            topic.category ||
+            "Uncategorized",
 
-        difficulty: topic.difficulty || "Easy",
+        difficulty:
+            topic.difficulty ||
+            "Easy",
 
-        status: topic.status || "Draft",
+        status:
+            topic.status ||
+            "Draft",
 
-        favorite: Boolean(topic.favorite),
+        favorite:
+            Boolean(topic.favorite),
 
-        information: Array.isArray(topic.information) ? topic.information : [],
+        image:
+            topic.image || "",
 
-        questions: Array.isArray(topic.questions) ? topic.questions : [],
+        youtube:
+            topic.youtube || "",
 
-        createdAt: topic.createdAt || new Date().toISOString(),
+        information:
+            Array.isArray(
+                topic.information
+            )
+                ? topic.information
+                : [],
 
-        updatedAT: topic.updatedAt || topic.createdAt || new Date().toISOString()
+        questions:
+            Array.isArray(
+                topic.questions
+            )
+                ? topic.questions
+                : [],
+
+        createdAt:
+            topic.createdAt ||
+            now,
+
+        updatedAt:
+            topic.updatedAt ||
+            topic.createdAt ||
+            now
     };
 
 }
+
+
+/*==================================================
+    IMPORT
+==================================================*/
 
 async function importLibrary(file) {
 
     try {
 
-        const fileText = await file.text();
+        transferMessage.textContent =
+            "Importing topics...";
 
-        const parsedData = JSON.parse(fileText);
+        transferMessage.className =
+            "save-message";
 
-        const importedTopics = getImportedTopics(parsedData);
+        const fileText =
+            await file.text();
 
-        if(!importedTopics) {
-            throw new Error("This file does not contain a valid topic library!");
+        const parsedData =
+            JSON.parse(fileText);
+
+        const importedTopics =
+            getImportedTopics(
+                parsedData
+            );
+
+        if (!importedTopics) {
+            throw new Error(
+                "This file does not contain a valid topic library."
+            );
         }
 
-        const normalizedTopics = importedTopics.map(normalizedImportedTopic).filter(Boolean);
+        const normalizedTopics =
+            importedTopics
+                .map(
+                    normalizeImportedTopic
+                )
+                .filter(Boolean);
 
-        if (normalizedTopics.length === 0) {
-            throw new Error("No usable topics were fond in the file.");
+        if (
+            normalizedTopics.length === 0
+        ) {
+            throw new Error(
+                "No usable topics were found in the file."
+            );
         }
 
-        const savedTopics = getTopics();
+        const savedTopics =
+            await getTopics();
 
-        const savedIds = new Set(savedTopics.map(topic => String(topic.id)));
+        const savedIds =
+            new Set(
+                savedTopics.map(topic =>
+                    String(topic.id)
+                )
+            );
 
-        const newTopics = normalizedTopics.filter(topic => !savedIds.has(String(topic.id)));
+        const newTopics =
+            normalizedTopics.filter(
+                topic =>
+                    !savedIds.has(
+                        String(topic.id)
+                    )
+            );
 
-        const skippedCount = normalizedTopics.length - newTopics.length;
+        const skippedCount =
+            normalizedTopics.length -
+            newTopics.length;
 
-        const combinedTopics = [...savedTopics, ...newTopics];
-        
-        saveTopics(combinedTopics);
+        let importedCount = 0;
 
-        populateCategoryFilter();
-        applyFilters();
+        for (const topic of newTopics) {
 
-        transferMessage.textContent = `${newTopics.length} topic(s) imported. ` + `${skippedCount} duplicate(s) skipped.`;
+            await saveTopicToStorage(
+                topic
+            );
 
-        transferMessage.className = "save-message success";
+            importedCount += 1;
+
+        }
+
+        /*
+         * Refresh the library's in-memory data
+         * from the cloud after importing.
+         */
+        if (
+            typeof libraryTopics !==
+            "undefined"
+        ) {
+            libraryTopics =
+                await getTopics();
+        }
+
+        if (
+            typeof populateCategoryFilter ===
+            "function"
+        ) {
+            populateCategoryFilter();
+        }
+
+        if (
+            typeof applyFilters ===
+            "function"
+        ) {
+            applyFilters();
+        }
+
+        transferMessage.textContent =
+            `${importedCount} topic(s) imported. ` +
+            `${skippedCount} duplicate(s) skipped.`;
+
+        transferMessage.className =
+            "save-message success";
+
     } catch (error) {
-        ///transferMessage.textContent = error.mesage || "The library could not be imported";
 
-        ///transferMessage.className = "save-message error";
-        console.error("Library import failed:",error);
-        transferMessage.textContent = error instanceof Error ? error.message : "The library could not be imported.";
-        transferMessage.className = "save-message error";
+        console.error(
+            "Library import failed:",
+            error
+        );
+
+        transferMessage.textContent =
+            error instanceof Error
+                ? error.message
+                : "The library could not be imported.";
+
+        transferMessage.className =
+            "save-message error";
+
     }
-    
+
 }
 
 
-exportLibraryButton.addEventListener("click", exportLibrary);
+/*==================================================
+    EVENTS
+==================================================*/
 
-importLibraryInput.addEventListener("change", async event => {
-    const file = event.target.files[0];
+exportLibraryButton.addEventListener(
+    "click",
+    exportLibrary
+);
 
-    if (!file) {
-        return;
+importLibraryInput.addEventListener(
+    "change",
+    async event => {
+
+        const file =
+            event.target.files[0];
+
+        if (!file) {
+            return;
+        }
+
+        await importLibrary(file);
+
+        event.target.value = "";
+
     }
-
-    await importLibrary(file);
-
-    event.target.value = "";
-});
+);
